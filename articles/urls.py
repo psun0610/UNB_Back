@@ -13,7 +13,8 @@ urlpatterns = [
     path("", include(router.urls)),
     path("<int:article_pk>/article_detail/", views.get_article),
     path("<int:game_pk>/game_pick/", views.pick_AB),
-    path("new_article", views.today_article),
+    # path("new_article/", views.today_article),
+    path("<int:comment_pk>/comment_like/", views.like_comment),
     path(
         "<int:article_pk>/comment",
         views.CommentViewSet.as_view({"post": "create", "get": "list"}),
@@ -35,5 +36,3 @@ urlpatterns = [
         ),
     ),
 ]
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
