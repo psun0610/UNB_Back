@@ -22,7 +22,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         queryset = Article.objects.all()
         user = get_object_or_404(queryset, pk=pk)
-        serializer = GetArticleSerializer(user)
+        serializer = ArticleSerializer(user)
         return Response(serializer.data)
 
 
@@ -51,7 +51,6 @@ class CommentViewSet(viewsets.ModelViewSet):
         return super().get_queryset().filter(article=self.kwargs.get("article_pk"))
 
 
-
 class ReCommentViewSet(viewsets.ModelViewSet):
     serializer_class = ReCommentSerializer
     permission_classes = [IsOwnerOrReadOnly]
@@ -66,7 +65,6 @@ class ReCommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return super().get_queryset().filter(parent=self.kwargs.get("comment_pk"))
-
 
 
 class PickViewSet(viewsets.ModelViewSet):
@@ -141,3 +139,19 @@ def pick_AB(request, game_pk):
         return Response(data)
     else:
         return Response({"message": "잘못된 접근입니다."})
+
+
+@api_view(["POST"])
+def like_comment(request, comment_pk):
+    comment = get_object_or_404(Comment, pk=comment_pk)
+
+    if comment.like.filter(user=request.user).exists():
+        comment.like.remove(request.user)
+    else:
+        comment.like.add(request.user)
+
+    data = {
+        "like_counts": len(comment.like.all()),
+        "is_likeed": comment.like.filter(user=request.user).exists(),
+    }
+    return Response(data)
