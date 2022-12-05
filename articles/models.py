@@ -10,6 +10,8 @@ class Article(models.Model):
     B = models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    A_count = models.IntegerField(default=0)
+    B_count = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -28,3 +30,13 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.comment
+
+
+class Pick(models.Model):
+    article = models.ForeignKey(
+        Article, null=False, blank=False, on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.CASCADE
+    )
+    AB = models.IntegerField(default=0)
