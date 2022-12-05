@@ -51,7 +51,6 @@ class ReCommentViewSet(viewsets.ModelViewSet):
 
 
 class PickViewSet(viewsets.ModelViewSet):
-
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
