@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from articles.models import Article, Comment, ReComment
+from articles.models import Article, Comment, ReComment, Pick
 
 
 class ReCommentSerializer(serializers.ModelSerializer):
@@ -52,3 +52,10 @@ class ArticleSerializer(serializers.ModelSerializer):
             "user",
             "comments",
         ]
+
+
+# 유저가 아티클 (밸런스게임문제)중 A or B를 선택했을 때 ,
+class PickSerializer(serializers.ModelSerializer):
+    class Meta:
+        models = Pick
+        fields = "__all__"

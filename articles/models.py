@@ -10,6 +10,8 @@ class Article(models.Model):
     B = models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    A_count = models.IntegerField(default=0)
+    B_count = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -48,11 +50,19 @@ class ReComment(models.Model):
         null=False,
         blank=False,
     )
+
+    def __str__(self):
+        return self.content
+
+
+class Pick(models.Model):
+    article = models.ForeignKey(
+        Article, null=False, blank=False, on_delete=models.CASCADE
+    )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.CASCADE
     )
     created_at = models.DateField(auto_now_add=True, null=False, blank=False)
     content = models.TextField()
 
-    def __str__(self):
-        return self.content
+    AB = models.IntegerField(default=0)
