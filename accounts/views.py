@@ -1,5 +1,5 @@
 import requests
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.http import JsonResponse
@@ -12,7 +12,8 @@ from allauth.socialaccount.providers.kakao import views as kakao_view
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from allauth.socialaccount.models import SocialAccount
 from .models import User
-
+from rest_framework.decorators import api_view
+from .serializers import *
 
 state = getattr(settings, "STATE")
 BASE_URL = "http://localhost:8000/"
@@ -191,3 +192,21 @@ class KakaoLogin(SocialLoginView):
     adapter_class = kakao_view.KakaoOAuth2Adapter
     client_class = OAuth2Client
     callback_url = KAKAO_CALLBACK_URI
+
+
+# 유저 페이지 확인 (유저정보 및 유저 작성한 글 확인 )
+@api_view(["GET", "PUT"])
+def my_page(request, user_pk):
+    user_info = get_object_or_404(User, pk=user_pk)
+    print(user_info)
+    if request.method == "GET":
+        serializers = UserArticleInfo(user_info)
+        print(serializers.data, type(serializers.data))
+        return Response(serializers.data)
+    # 유저정보 수정 put메서드 사용 (raise_exception=True<- (commit=True)와 같은 역활
+    elif request.method == "PUT":
+        if request.user.is_authenticated:
+            serializers = UserArticleInfo(data=request.data, instance=user_info)
+            if serializers.is_valid(raise_exception=True):
+                serializers.save()
+                return Response(serializers.data)

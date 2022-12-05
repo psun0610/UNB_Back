@@ -14,4 +14,5 @@ urlpatterns = [
     path(
         "kakao/login/finish/", views.KakaoLogin.as_view(), name="kakao_login_todjango"
     ),
+    path("<int:user_pk>/my_page/", views.my_page, name="my_page"),
 ]

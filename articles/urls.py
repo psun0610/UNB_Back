@@ -1,8 +1,7 @@
 from django.urls import path, include
 from rest_framework import routers
 from . import views
-from django.conf import settings
-from django.conf.urls.static import static
+
 
 app_name = "articles"
 router = routers.DefaultRouter()
@@ -12,6 +11,9 @@ router.register("", views.ArticleViewSet, basename="article")
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("<int:article_pk>/article_detail/", views.get_article),
+    path("<int:game_pk>/game_pick/", views.pick_AB),
+    path("new_article", views.today_article),
     path(
         "<int:article_pk>/comment",
         views.CommentViewSet.as_view({"post": "create", "get": "list"}),
@@ -34,3 +36,4 @@ urlpatterns = [
     ),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
