@@ -18,18 +18,41 @@ class Article(models.Model):
 
 
 class Comment(models.Model):
-    id = models.AutoField(primary_key=True, null=False, blank=False)
     article = models.ForeignKey(
-        Article, null=False, blank=False, on_delete=models.CASCADE
+        Article,
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
+        related_name="comments",
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.CASCADE
     )
     created_at = models.DateField(auto_now_add=True, null=False, blank=False)
-    comment = models.TextField()
+    content = models.TextField()
 
     def __str__(self):
-        return self.comment
+        return self.content
+
+
+class ReComment(models.Model):
+    article = models.ForeignKey(
+        Article,
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
+        related_name="recomments",
+    )
+    parent = models.ForeignKey(
+        Comment,
+        related_name="soncomments",
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+    )
+
+    def __str__(self):
+        return self.content
 
 
 class Pick(models.Model):
@@ -39,4 +62,7 @@ class Pick(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.CASCADE
     )
+    created_at = models.DateField(auto_now_add=True, null=False, blank=False)
+    content = models.TextField()
+
     AB = models.IntegerField(default=0)

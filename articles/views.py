@@ -1,12 +1,10 @@
 from django.shortcuts import get_object_or_404
-
 from .serializers import *
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.db.models import Q
 from .models import *
-
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .permissions import IsOwnerOrReadOnly
 
@@ -14,9 +12,9 @@ from .permissions import IsOwnerOrReadOnly
 
 
 class ArticleViewSet(viewsets.ModelViewSet):
+    serializer_class = ArticleSerializer
     permission_classes = [IsOwnerOrReadOnly]
     queryset = Article.objects.all()
-    serializer_class = ArticleSerializer
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -39,19 +37,36 @@ def get_article(request, article_pk):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-
+    serializer_class = CommentSerializer
     permission_classes = [IsOwnerOrReadOnly]
     queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(
+            user=self.request.user,
+            article=Article.objects.get(pk=self.kwargs.get("article_pk")),
+        )
+
+    def get_queryset(self):
+        return super().get_queryset().filter(article=self.kwargs.get("article_pk"))
 
 
-# @api_view(["POST"])
-# def create_comment(request,article_pk):
-#     article = get_object_or_404(Article, pk=article_pk)
-#     create = Comment.create(user=request.user,)
+
+class ReCommentViewSet(viewsets.ModelViewSet):
+    serializer_class = ReCommentSerializer
+    permission_classes = [IsOwnerOrReadOnly]
+    queryset = ReComment.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save(
+            user=self.request.user,
+            article=Article.objects.get(pk=self.kwargs.get("article_pk")),
+            parent=Comment.objects.get(pk=self.kwargs.get("comment_pk")),
+        )
+
+    def get_queryset(self):
+        return super().get_queryset().filter(parent=self.kwargs.get("comment_pk"))
+
 
 
 class PickViewSet(viewsets.ModelViewSet):
