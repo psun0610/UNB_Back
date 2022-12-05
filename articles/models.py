@@ -30,6 +30,7 @@ class Comment(models.Model):
     )
     created_at = models.DateField(auto_now_add=True, null=False, blank=False)
     content = models.TextField()
+    like = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="comment_like")
 
     def __str__(self):
         return self.content
