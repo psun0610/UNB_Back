@@ -32,5 +32,9 @@ urlpatterns = [
             {"put": "update", "patch": "partial_update", "delete": "destroy"}
         ),
     ),
+    path(
+        "<int:article_pk>/comment/<int:comment_pk>/like",
+        views.LikeCreate.as_view(),
+    ),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

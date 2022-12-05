@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from .serializers import *
-from rest_framework import viewsets
+from rest_framework import status
+from rest_framework import viewsets, generics, mixins
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import *
@@ -32,6 +33,25 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return super().get_queryset().filter(article=self.kwargs.get("article_pk"))
+
+
+class LikeCreate(generics.ListCreateAPIView, mixins.DestroyModelMixin):
+    serializer_class = LikeSerializer
+    permission_classes = [IsOwnerOrReadOnly]
+
+    def get_queryset(self):
+        user = self.request.user
+        comment = Comment.objects.get(pk=self.kwargs.get("comment_pk"))
+        return Like.objects.filter(user=user, comment=comment)
+
+    def perform_create(self, serializer):
+        if self.get_queryset().exists():
+            self.get_queryset().delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        serializer.save(
+            user=self.request.user,
+            comment=Comment.objects.get(pk=self.kwargs.get("comment_pk")),
+        )
 
 
 class ReCommentViewSet(viewsets.ModelViewSet):
