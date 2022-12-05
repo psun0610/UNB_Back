@@ -49,16 +49,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     badge = models.IntegerField(
         default=0, validators=[MinValueValidator(0), MaxValueValidator(5)]
     )
-
     objects = UserManager()
-
     USERNAME_FIELD = "email"
-
     REQUIRED_FIELDS = ["nickname"]
 
     def __str__(self):
         return self.nickname
-
-
-class UserProfile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
