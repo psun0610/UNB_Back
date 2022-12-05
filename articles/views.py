@@ -1,6 +1,10 @@
-from .serializers import ArticleSerializer, CommentSerializer
+from django.shortcuts import get_object_or_404
+
+from .serializers import *
 from rest_framework import viewsets
-from .models import Article, Comment
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .models import *
 
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .permissions import IsOwnerOrReadOnly
@@ -25,3 +29,69 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class PickViewSet(viewsets.ModelViewSet):
+
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+
+# 오늘의 메인 주제 랜덤픽
+@api_view(["GET"])
+def today_article(request):
+    today_article = Article.objects.order_by("?").first()
+    serializer = ArticleSerializer(today_article)
+    Response(serializer.data)
+
+
+# 밸런스게임 픽 카운트 통계
+@api_view(["GET"])
+def count_pick(request, game_pk):
+    game = get_object_or_404(Article, pk=game_pk)
+    all_pick = Pick.objects.all(article=game)
+    A_pick = all_pick.filter(AB=1)
+    B_pick = all_pick.filter(AB=2)
+    A_percent = (A_pick.count() / all_pick.count()) * 100
+    B_percent = (B_pick.count() / all_pick.count()) * 100
+
+    pick_data = {
+        "all_count": all_pick.count(),
+        "A_count": A_pick.count(),
+        "B_count": B_pick.count(),
+        "A_percent": round(A_percent, 2),
+        "B_percent": round(B_percent, 2),
+    }
+    Response(pick_data)
+
+
+@api_view(["POST"])
+def pick_AB(request, game_pk):
+    if request.method == "POST":
+        game = get_object_or_404(Article, pk=game_pk)
+        pick = request.data["pick"]
+        if pick == 1:
+            game.A_count = game.A_count + 1
+        else:
+            game.B_count = game.B_count + 1
+        game.save()
+        if request.user.is_authenticated:
+            Pick.objects.create(article=game, user=request.user, AB=pick)
+        # 선택지 아티클에 저장 후 유저라면 선택기록 생성
+        # 이후 되돌려보낼 픽카운트 통계 리스폰시키기
+        all_pick = Pick.objects.all(article=game)
+        A_pick = all_pick.filter(AB=1)
+        B_pick = all_pick.filter(AB=2)
+        A_percent = (A_pick.count() / all_pick.count()) * 100
+        B_percent = (B_pick.count() / all_pick.count()) * 100
+
+        pick_data = {
+            "all_count": all_pick.count(),
+            "A_count": A_pick.count(),
+            "B_count": B_pick.count(),
+            "A_percent": round(A_percent, 1),
+            "B_percent": round(B_percent, 1),
+        }
+        Response(pick_data)
+    else:
+        Response({"message": "잘못된 접근입니다."})
