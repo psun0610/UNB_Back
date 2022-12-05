@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from articles.models import Article, Comment, ReComment, Pick
+from articles.models import Article, Comment, ReComment, Pick, Like
 
 
 class ReCommentSerializer(serializers.ModelSerializer):
@@ -25,6 +25,8 @@ class CommentSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source="user.nickname")
     article = serializers.ReadOnlyField(source="article.pk")
     soncomments = ReCommentSerializer(many=True, read_only=True)
+    # like_comment = serializers.StringRelatedField(many=True)
+    total_likes = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Comment
@@ -35,7 +37,11 @@ class CommentSerializer(serializers.ModelSerializer):
             "content",
             "created_at",
             "soncomments",
+            "total_likes",
         ]
+
+    def get_total_likes(self, comment):
+        return comment.like_comment.count()
 
 
 class ArticleSerializer(serializers.ModelSerializer):
@@ -51,6 +57,19 @@ class ArticleSerializer(serializers.ModelSerializer):
             "B",
             "user",
             "comments",
+        ]
+
+
+class LikeSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source="user.nickname")
+    comment = serializers.ReadOnlyField(source="comment.pk")
+
+    class Meta:
+        model = Like
+        fields = [
+            "pk",
+            "user",
+            "comment",
         ]
 
 

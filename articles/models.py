@@ -36,6 +36,15 @@ class Comment(models.Model):
         return self.content
 
 
+class Like(models.Model):
+    comment = models.ForeignKey(
+        Comment, on_delete=models.CASCADE, related_name="like_comment"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_like"
+    )
+
+
 class ReComment(models.Model):
     article = models.ForeignKey(
         Article,
@@ -44,6 +53,9 @@ class ReComment(models.Model):
         on_delete=models.CASCADE,
         related_name="recomments",
     )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.CASCADE
+    )
     parent = models.ForeignKey(
         Comment,
         related_name="soncomments",
@@ -51,6 +63,8 @@ class ReComment(models.Model):
         null=False,
         blank=False,
     )
+    created_at = models.DateField(auto_now_add=True, null=False, blank=False)
+    content = models.TextField()
 
     def __str__(self):
         return self.content
@@ -63,7 +77,5 @@ class Pick(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.CASCADE
     )
-    created_at = models.DateField(auto_now_add=True, null=False, blank=False)
-    content = models.TextField()
 
     AB = models.IntegerField(default=0)
