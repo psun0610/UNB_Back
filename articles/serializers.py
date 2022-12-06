@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from articles.models import Article, Comment, ReComment, Pick, Like
+from articles.models import Article, Comment, ReComment, Pick, Like, Score
 
 
 class ReCommentSerializer(serializers.ModelSerializer):
