@@ -59,11 +59,11 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.kakao",
     "corsheaders",
-
+    "profiles",
 ]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware", # 왠만하면 가장 위로
+    "corsheaders.middleware.CorsMiddleware",  # 왠만하면 가장 위로
     "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -139,7 +139,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2), # access 토큰 만료 테스트를 하려면 2~3분으로 바꿀것
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),  # access 토큰 만료 테스트를 하려면 2~3분으로 바꿀것
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -203,18 +203,17 @@ CORS_ALLOW_METHODS = [
     "PUT",
 ]
 CORS_ALLOW_HEADERS = (
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'access-control-request-method',
-    'access-control-request-headers',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-    'access-token',
-    'Refresh',
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "access-control-request-method",
+    "access-control-request-headers",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+    "access-token",
+    "Refresh",
 )
-

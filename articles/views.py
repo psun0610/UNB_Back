@@ -7,16 +7,33 @@ from django.db.models import Q
 from .models import *
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .permissions import IsOwnerOrReadOnly
+from datetime import datetime
 
 # Create your views here.
+now = datetime.now()
 
-
+# 토픽 작성시에
 class ArticleViewSet(viewsets.ModelViewSet):
     serializer_class = ArticleSerializer
     permission_classes = [IsOwnerOrReadOnly]
     queryset = Article.objects.all()
 
     def perform_create(self, serializer):
+        try:
+            if Score.objects.get(user=self.request.user) != None:
+                score = Score.objects.get(user=self.request.user)
+                if score.updated != now.date():
+                    score.today = 0
+                    score.save()
+            if Score.objects.get(user=self.request.user) != None:
+                score = Score.objects.get(user=self.request.user)
+                print(score.updated)
+                # print(now.date())
+                score.total += 20
+                score.today += 20
+                score.save()
+        except:
+            Score.objects.create(user=self.request.user, total=20, today=20)
         serializer.save(user=self.request.user)
 
     def retrieve(self, request, pk=None):
@@ -40,12 +57,26 @@ def get_article(request, article_pk):
         return Response(serializers.data)
 
 
+#  댓글 작성시에
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [IsOwnerOrReadOnly]
     queryset = Comment.objects.all()
 
     def perform_create(self, serializer):
+        try:
+            if Score.objects.get(user=self.request.user) != None:
+                score = Score.objects.get(user=self.request.user)
+                if score.updated != now.date():
+                    score.today = 0
+                    score.save()
+            if Score.objects.get(user=self.request.user) != None:
+                score = Score.objects.get(user=self.request.user)
+                score.total += 5
+                score.today += 5
+                score.save()
+        except:
+            Score.objects.create(user=self.request.user, total=5, today=5)
         serializer.save(
             user=self.request.user,
             article=Article.objects.get(pk=self.kwargs.get("article_pk")),
@@ -123,6 +154,7 @@ def today_article(request):
 #     return Response(pick_data)
 
 
+#  픽 추가시에
 @api_view(["POST", "GET"])
 def pick_AB(request, game_pk):
     game = get_object_or_404(Article, pk=game_pk)
@@ -143,6 +175,20 @@ def pick_AB(request, game_pk):
             else:
                 Pick.objects.create(article=game, user=request.user, AB=pick)
                 print("생성")
+
+                try:
+                    if Score.objects.get(user=request.user) != None:
+                        score = Score.objects.get(user=request.user)
+                        if score.updated != now.date():
+                            score.today = 0
+                            score.save()
+                    if Score.objects.get(user=request.user) != None:
+                        score = Score.objects.get(user=request.user)
+                        score.total += 10
+                        score.today += 10
+                        score.save()
+                except:
+                    Score.objects.create(user=request.user, total=10, today=10)
         # 선택지 아티클에 저장 후 유저라면 선택기록 생성
         # 이후 되돌려보낼 픽카운트 통계 리스폰시키기
         all_pick = game.A_count + game.B_count
