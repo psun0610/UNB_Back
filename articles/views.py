@@ -34,7 +34,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
 @api_view(["GET"])
 def get_article(request, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
-    # print(article)
     if request.method == "GET":
         serializers = GetArticleSerializer(article)
         print(serializers.data)
