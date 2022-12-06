@@ -85,13 +85,19 @@ class ListDataSerializer(serializers.ModelSerializer):
 
     def get_ABcount(self, obj):
         game = Article.objects.get(pk=obj.pk)
-        all_pick = game.A_count + game.B_count
-        A_percent = (game.A_count / all_pick) * 100
-        B_percent = (game.B_count / all_pick) * 100
-        ABcount = {
-            "A_percent": round(A_percent, 1),
-            "B_percent": round(B_percent, 1),
-        }
+        if game.A_count > 0 or game.B_count > 0:
+            all_pick = game.A_count + game.B_count
+            A_percent = (game.A_count / all_pick) * 100
+            B_percent = (game.B_count / all_pick) * 100
+            ABcount = {
+                "A_percent": round(A_percent, 1),
+                "B_percent": round(B_percent, 1),
+            }
+        else:
+            ABcount = {
+                "A_percent": 0,
+                "B_percent": 0,
+            }
         return ABcount
 
     class Meta:

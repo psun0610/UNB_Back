@@ -16,7 +16,7 @@ urlpatterns = [
     # path("new_article/", views.today_article),
     path("<int:comment_pk>/comment_like/", views.like_comment),
     path(
-        "<int:article_pk>/comment",
+        "<int:article_pk>/comment/",
         views.CommentViewSet.as_view({"post": "create", "get": "list"}),
     ),
     path(
