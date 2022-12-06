@@ -80,6 +80,32 @@ class PickSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ListDataSerializer(serializers.ModelSerializer):
+    ABcount = serializers.SerializerMethodField()
+
+    def get_ABcount(self, obj):
+        game = Article.objects.get(pk=obj.pk)
+        all_pick = game.A_count + game.B_count
+        A_percent = (game.A_count / all_pick) * 100
+        B_percent = (game.B_count / all_pick) * 100
+        ABcount = {
+            "A_percent": round(A_percent, 1),
+            "B_percent": round(B_percent, 1),
+        }
+        return ABcount
+
+    class Meta:
+        model = Article
+        fields = [
+            "pk",
+            "title",
+            "A",
+            "B",
+            "user",
+            "ABcount",
+        ]
+
+
 class GetArticleSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source="user.nickname")
     comment = serializers.SerializerMethodField()
