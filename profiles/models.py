@@ -4,7 +4,7 @@ from django.conf import settings
 # Create your models here.
 
 
-class profile(models.Model):
+class Profiles(models.Model):
     grade = models.IntegerField(default=0)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
