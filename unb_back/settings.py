@@ -131,6 +131,7 @@ REST_AUTH_SERIALIZERS = {
 
 
 REST_FRAMEWORK = {
+    "DATETIME_INPUT_FORMATS": ["%d-%m-%Y %H:%M:%S"],
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",

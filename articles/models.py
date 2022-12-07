@@ -29,7 +29,7 @@ class Comment(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.CASCADE
     )
-    created_at = models.DateField(auto_now_add=True, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=False, blank=False)
     content = models.TextField()
     like = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="comment_like")
 
@@ -64,7 +64,7 @@ class ReComment(models.Model):
         null=False,
         blank=False,
     )
-    created_at = models.DateField(auto_now_add=True, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=False, blank=False)
     content = models.TextField()
 
     def __str__(self):

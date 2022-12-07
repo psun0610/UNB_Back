@@ -118,7 +118,6 @@ class GetArticleSerializer(serializers.ModelSerializer):
 
     def get_comment(self, obj):
         comment = list(obj.comment_set.all())
-
         # comment = {"test": "테스트용"}
         return CommentSerializer(comment, many=True).data
 
@@ -132,3 +131,9 @@ class GetArticleSerializer(serializers.ModelSerializer):
             "user",
             "comment",
         )
+
+
+class InfoArticleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Article
+        fields = ("pk", "title")
