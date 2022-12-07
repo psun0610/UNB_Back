@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .models import Score
 
 # Create your views here.
-from .Serializers import ScoreSerializer
+from .serializers import ScoreSerializer
 from rest_framework import response
 
 

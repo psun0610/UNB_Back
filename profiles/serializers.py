@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from profiles.models import Score
 
 
 class BadgeSerializer(serializers.HyperlinkedModelSerializer):
@@ -32,3 +33,9 @@ class UsingBadgeSerializer(serializers.HyperlinkedModelSerializer):
             "user",
             "badge",
         ]
+
+
+class ScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Score
+        fields = ("user", "total")
