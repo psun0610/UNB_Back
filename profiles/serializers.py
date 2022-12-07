@@ -2,15 +2,15 @@ from rest_framework import serializers
 from .models import *
 
 
-class BadgeSerializer(serializers.HyperlinkedModelSerializer):
+class BadgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Badge
-        fields = "__all__"
+        fields = ("pk", "name", "image")
 
 
-class UserBadgeSerializer(serializers.HyperlinkedModelSerializer):
+class UserBadgeSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source="user.nickname")
-    badge = BadgeSerializer(many=True, read_only=True)
+    badge = BadgeSerializer(read_only=True)
 
     class Meta:
         model = UserBadge
@@ -21,14 +21,15 @@ class UserBadgeSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
 
-class UsingBadgeSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.ReadOnlyField(source="user.nickname")
+class ScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Score
+        fields = ("user", "total")
+
+
+class ProfileSerializer(serializers.ModelSerializer):
     badge = BadgeSerializer(read_only=True)
 
     class Meta:
-        model = UsingBadge
-        fields = [
-            "pk",
-            "user",
-            "badge",
-        ]
+        model = Profiles
+        fields = ("grade", "badge")

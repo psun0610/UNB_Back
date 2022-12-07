@@ -224,19 +224,3 @@ def pick_AB(request, game_pk):
             "B_percent": round(B_percent, 1),
         }
         return Response(data)
-
-
-@api_view(["POST"])
-def like_comment(request, comment_pk):
-    comment = get_object_or_404(Comment, pk=comment_pk)
-
-    if comment.like.filter(user=request.user).exists():
-        comment.like.remove(request.user)
-    else:
-        comment.like.add(request.user)
-
-    data = {
-        "like_counts": len(comment.like.all()),
-        "is_likeed": comment.like.filter(user=request.user).exists(),
-    }
-    return Response(data)

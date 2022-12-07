@@ -1,13 +1,17 @@
 from accounts.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Profiles, Score
+from .models import Profiles, Score, UserBadge, Badge
 
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
+    # print("create", created)
+    # print(instance)
     if created:
         Profiles.objects.create(user=instance)
+        UserBadge.objects.create(user=instance, badge=Badge.objects.get(pk=1))
+        # print("프로필 생성완료")
 
 
 @receiver(post_save, sender=Score)
