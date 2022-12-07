@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.kakao",
     "corsheaders",
     "profiles",
+    "django_mysql",
 ]
 
 MIDDLEWARE = [

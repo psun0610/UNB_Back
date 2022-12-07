@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 class Article(models.Model):
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=50, blank=True)
     A = models.CharField(max_length=50)
     B = models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
