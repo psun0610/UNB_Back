@@ -4,7 +4,6 @@ from django.conf import settings
 # Create your models here.
 
 
-
 class Badge(models.Model):
     name = models.CharField(max_length=20)
     image = models.ImageField(upload_to="badges")
@@ -33,7 +32,8 @@ class UsingBadge(models.Model):
         Badge, null=False, blank=False, on_delete=models.CASCADE, default=1
     )
 
-class profile(models.Model):
+
+class Profiles(models.Model):
     grade = models.IntegerField(default=0)
 
     user = models.ForeignKey(
@@ -59,6 +59,3 @@ class Score(models.Model):
     today = models.IntegerField(default=0)
 
     updated = models.DateField(auto_now=True)
-
-
-
