@@ -20,13 +20,13 @@ def check_score(sender, instance, **kwargs):
     user_score = Score.objects.get(user=user)
     user_profile = Profiles.objects.get(user=user)
     if user_score.total >= 300:
-        user_profile.grade = 1
-    elif user_score.total >= 600:
         user_profile.grade = 2
-    elif user_score.total >= 1000:
+    elif user_score.total >= 600:
         user_profile.grade = 3
-    elif user_score.total >= 1600:
+    elif user_score.total >= 1000:
         user_profile.grade = 4
-    elif user_score.total >= 2500:
+    elif user_score.total >= 1600:
         user_profile.grade = 5
+    elif user_score.total >= 2500:
+        user_profile.grade = 6
     user_profile.save()
