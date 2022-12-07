@@ -12,9 +12,10 @@ from allauth.socialaccount.providers.kakao import views as kakao_view
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from allauth.socialaccount.models import SocialAccount
 from .models import User
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from .serializers import *
 from profiles.models import Score, Profiles
+from articles.permissions import IsOwnerOrReadOnly
 
 state = getattr(settings, "STATE")
 BASE_URL = "http://localhost:8000/"
@@ -197,15 +198,15 @@ class KakaoLogin(SocialLoginView):
 
 # 유저 페이지 확인 (유저정보 및 유저 작성한 글 확인 )
 @api_view(["GET", "PUT"])
+@permission_classes([IsOwnerOrReadOnly])
 def my_page(request, user_pk):
     user_info = get_object_or_404(User, pk=user_pk)
-
-    if request.method == "GET" and user_pk == request.user.pk:
+    if request.method == "GET":
         serializers = UserInfo(user_info)
         # user_article = Article.objects.filter(user=request.user)
         user_comment = Comment.objects.filter(user=user_info)
         user_recomment = ReComment.objects.filter(user=user_info)
-        user_profile = Profiles.objects.get(user=user_info)
+        # user_profile = Profiles.objects.get(user=user_info)
         user_score = Score.objects.get(user=user_info)
         # user_pick = Pick.objects.filter(user=request.user)
         comment = []
@@ -228,7 +229,7 @@ def my_page(request, user_pk):
         all_data = {
             "comment": comment,
             "userinfo": serializers.data,
-            "grade": user_profile.grade,
+            # "grade": user_profile.grade,
             "all_score": user_score.total,
             "today_score": user_score.today,
         }
