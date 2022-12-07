@@ -14,6 +14,7 @@ from allauth.socialaccount.models import SocialAccount
 from .models import User
 from rest_framework.decorators import api_view
 from .serializers import *
+from profiles.models import Score, Profiles
 
 state = getattr(settings, "STATE")
 BASE_URL = "http://localhost:8000/"
@@ -202,8 +203,10 @@ def my_page(request, user_pk):
     if request.method == "GET" and user_pk == request.user.pk:
         serializers = UserInfo(user_info)
         # user_article = Article.objects.filter(user=request.user)
-        user_comment = Comment.objects.filter(user=request.user)
-        user_recomment = ReComment.objects.filter(user=request.user)
+        user_comment = Comment.objects.filter(user=user_info)
+        user_recomment = ReComment.objects.filter(user=user_info)
+        user_profile = Profiles.objects.get(user=user_info)
+        user_score = Score.objects.get(user=user_info)
         # user_pick = Pick.objects.filter(user=request.user)
         comment = []
         for c in user_comment:
@@ -222,7 +225,13 @@ def my_page(request, user_pk):
                     "created_at": r.created_at.strftime("%Y-%m-%d %H:%M"),
                 }
             )
-        all_data = {"comment": comment, "userinfo": serializers.data}
+        all_data = {
+            "comment": comment,
+            "userinfo": serializers.data,
+            "grade": user_profile.grade,
+            "all_score": user_score.total,
+            "today_score": user_score.today,
+        }
         return Response(all_data)
     # 유저정보 수정 put메서드 사용 (raise_exception=True<- (commit=True)와 같은 역활
     elif request.method == "PUT":
