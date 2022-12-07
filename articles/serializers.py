@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from articles.models import Article, Comment, ReComment, Pick, Like, Score
+from articles.models import Article, Comment, ReComment, Pick, Like
+from profiles.models import Score
 
 
 class ReCommentSerializer(serializers.ModelSerializer):
@@ -136,4 +137,4 @@ class GetArticleSerializer(serializers.ModelSerializer):
 class InfoArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
-        fields = ("pk", "title")
+        fields = ("pk", "title", "A", "B")
