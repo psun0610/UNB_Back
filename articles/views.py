@@ -8,10 +8,16 @@ from .models import *
 from profiles.models import Score
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .permissions import IsOwnerOrReadOnly
-from datetime import datetime
+from profiles.models import Grass
+import datetime
+import calendar
 
-# Create your views here.
-now = datetime.now()
+today = datetime.date.today()
+
+year = today.year
+month = today.month
+day = today.day
+monthrange = calendar.monthrange(year, month)[1]
 
 # 토픽 작성시에
 class ArticleViewSet(viewsets.ModelViewSet):
@@ -21,37 +27,121 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         try:
-            if Score.objects.get(user=self.request.user) != None:
-                score = Score.objects.get(user=self.request.user)
-                if score.updated != now.date():
-                    score.today = 0
-                    score.save()
-            if Score.objects.get(user=self.request.user) != None:
-                score = Score.objects.get(user=self.request.user)
-                print(score.updated)
-                # print(now.date())
-                score.total += 20
-                score.today += 20
-                score.save()
+
+            score = Score.objects.get(user=self.request.user)
+            score.total += 20
+            score.today += 20
+            score.save()
+
+            grass = Grass.objects.get(
+                user=self.request.user, year=year, month=month, monthrange=monthrange
+            )
+            if day not in grass.daylist:
+                grass.daylist.append(day)
+            grass.save()
+
+            daylist = grass.daylist
+            if len(grass.daylist) == 1:
+                consecutive = 1
+            else:
+                cnt = 1
+                daymax1 = []
+                daymax2 = []
+                for i in daylist:
+                    daymax1.append(i)
+                daymax1.append(0)
+                for i in range(len(daylist) - 1):
+                    if daymax1[i + 1] - daymax1[i] == 1:
+                        cnt += 1
+                    else:
+                        daymax2.append(cnt)
+                        cnt = 1
+                consecutive = max(daymax2)
+            grass.consecutive = consecutive
+            grass.save()
+
         except:
-            Score.objects.create(user=self.request.user, total=20, today=20)
+            pass
         serializer.save(user=self.request.user)
 
     def retrieve(self, request, pk=None):
         queryset = Article.objects.all()
         user = get_object_or_404(queryset, pk=pk)
         serializer = ArticleSerializer(user)
+        try:
+            score = Score.objects.get(user=request.user)
+            if score.updated != today:
+                score.today = 0
+                score.save()
+
+            grass = Grass.objects.get(user=request.user, year=year, month=month)
+            if grass:
+                pass
+            else:
+                Grass.objects.create(
+                    user=request.user, year=year, month=month, monthrange=monthrange
+                )
+        except:
+            try:
+                Score.objects.create(user=request.user, total=0, today=0)
+                Grass.objects.create(
+                    user=request.user, year=year, month=month, monthrange=monthrange
+                )
+            except:
+                pass
         return Response(serializer.data)
 
     def list(self, request, *args, **kwargs):
         queryset = Article.objects.all()
         serializers = ListDataSerializer(queryset, many=True)
+        try:
+            score = Score.objects.get(user=request.user)
+            if score.updated != today:
+                score.today = 0
+                score.save()
+
+            grass = Grass.objects.get(user=request.user, year=year, month=month)
+            if grass:
+                pass
+            else:
+                Grass.objects.create(
+                    user=request.user, year=year, month=month, monthrange=monthrange
+                )
+        except:
+            try:
+                Score.objects.create(user=request.user, total=0, today=0)
+                Grass.objects.create(
+                    user=request.user, year=year, month=month, monthrange=monthrange
+                )
+            except:
+                pass
         return Response(serializers.data)
 
 
 @api_view(["GET"])
 def get_article(request, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
+    try:
+        score = Score.objects.get(user=request.user)
+        if score.updated != today:
+            score.today = 0
+            score.save()
+
+        grass = Grass.objects.get(user=request.user, year=year, month=month)
+        if grass:
+            pass
+        else:
+            Grass.objects.create(
+                user=request.user, year=year, month=month, monthrange=monthrange
+            )
+    except:
+        try:
+            Score.objects.create(user=request.user, total=0, today=0)
+            Grass.objects.create(
+                user=request.user, year=year, month=month, monthrange=monthrange
+            )
+        except:
+            pass
     if request.method == "GET":
         serializers = GetArticleSerializer(article)
         print(serializers.data)
@@ -66,18 +156,41 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         try:
-            if Score.objects.get(user=self.request.user) != None:
-                score = Score.objects.get(user=self.request.user)
-                if score.updated != now.date():
-                    score.today = 0
-                    score.save()
-            if Score.objects.get(user=self.request.user) != None:
-                score = Score.objects.get(user=self.request.user)
-                score.total += 5
-                score.today += 5
-                score.save()
+
+            score = Score.objects.get(user=self.request.user)
+            score.total += 5
+            score.today += 5
+            score.save()
+
+            grass = Grass.objects.get(
+                user=self.request.user, year=year, month=month, monthrange=monthrange
+            )
+            if day not in grass.daylist:
+                grass.daylist.append(day)
+            grass.save()
+
+            daylist = grass.daylist
+            if len(grass.daylist) == 1:
+                consecutive = 1
+            else:
+                cnt = 1
+                daymax1 = []
+                daymax2 = []
+                for i in daylist:
+                    daymax1.append(i)
+                daymax1.append(0)
+                for i in range(len(daylist) - 1):
+                    if daymax1[i + 1] - daymax1[i] == 1:
+                        cnt += 1
+                    else:
+                        daymax2.append(cnt)
+                        cnt = 1
+                consecutive = max(daymax2)
+            grass.consecutive = consecutive
+            grass.save()
+
         except:
-            Score.objects.create(user=self.request.user, total=5, today=5)
+            pass
         serializer.save(
             user=self.request.user,
             article=Article.objects.get(pk=self.kwargs.get("article_pk")),
@@ -178,18 +291,41 @@ def pick_AB(request, game_pk):
                 print("생성")
 
                 try:
-                    if Score.objects.get(user=request.user) != None:
-                        score = Score.objects.get(user=request.user)
-                        if score.updated != now.date():
-                            score.today = 0
-                            score.save()
-                    if Score.objects.get(user=request.user) != None:
-                        score = Score.objects.get(user=request.user)
-                        score.total += 10
-                        score.today += 10
-                        score.save()
+
+                    score = Score.objects.get(user=request.user)
+                    score.total += 10
+                    score.today += 10
+                    score.save()
+
+                    grass = Grass.objects.get(
+                        user=request.user, year=year, month=month, monthrange=monthrange
+                    )
+                    if day not in grass.daylist:
+                        grass.daylist.append(day)
+                    grass.save()
+
+                    daylist = grass.daylist
+                    if len(grass.daylist) == 1:
+                        consecutive = 1
+                    else:
+                        cnt = 1
+                        daymax1 = []
+                        daymax2 = []
+                        for i in daylist:
+                            daymax1.append(i)
+                        daymax1.append(0)
+                        for i in range(len(daylist) - 1):
+                            if daymax1[i + 1] - daymax1[i] == 1:
+                                cnt += 1
+                            else:
+                                daymax2.append(cnt)
+                                cnt = 1
+                        consecutive = max(daymax2)
+                    grass.consecutive = consecutive
+                    grass.save()
+
                 except:
-                    Score.objects.create(user=request.user, total=10, today=10)
+                    pass
         # 선택지 아티클에 저장 후 유저라면 선택기록 생성
         # 이후 되돌려보낼 픽카운트 통계 리스폰시키기
         all_pick = game.A_count + game.B_count
