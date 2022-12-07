@@ -15,32 +15,22 @@ class UserBadge(models.Model):
         null=False,
         blank=False,
         on_delete=models.CASCADE,
-        related_name="user_badge",
+        related_name="user_badges",
     )
     badge = models.ForeignKey(Badge, null=False, blank=False, on_delete=models.CASCADE)
 
 
-class UsingBadge(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        null=False,
-        blank=False,
-        on_delete=models.CASCADE,
-        related_name="using_badge",
-    )
+class Profiles(models.Model):
+    grade = models.IntegerField(default=0)
     badge = models.ForeignKey(
         Badge, null=False, blank=False, on_delete=models.CASCADE, default=1
     )
-
-
-class Profiles(models.Model):
-    grade = models.IntegerField(default=0)
-
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=False,
         blank=False,
         on_delete=models.CASCADE,
+        related_name="profiles",
     )
 
 
