@@ -34,7 +34,7 @@ class UsingBadge(models.Model):
 
 
 class Profiles(models.Model):
-    grade = models.IntegerField(default=0)
+    grade = models.IntegerField(default=1)
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
