@@ -1,0 +1,34 @@
+[
+    {
+        "model": "profiles.badge",
+        "pk": 1,
+        "fields": {
+            "name": "기본",
+            "image": "badges/base.png"
+        }
+    },
+    {
+        "model": "profiles.badge",
+        "pk": 2,
+        "fields": {
+            "name": "브론즈",
+            "image": "badges/bronze.png"
+        }
+    },
+    {
+        "model": "profiles.badge",
+        "pk": 3,
+        "fields": {
+            "name": "실버",
+            "image": "badges/silver.png"
+        }
+    },
+    {
+        "model": "profiles.badge",
+        "pk": 4,
+        "fields": {
+            "name": "골드",
+            "image": "badges/gold.png"
+        }
+    }
+]

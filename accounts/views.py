@@ -12,8 +12,10 @@ from allauth.socialaccount.providers.kakao import views as kakao_view
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from allauth.socialaccount.models import SocialAccount
 from .models import User
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from .serializers import *
+from profiles.models import Score, Profiles
+from articles.permissions import IsOwnerOrReadOnly
 
 state = getattr(settings, "STATE")
 BASE_URL = "http://localhost:8000/"
@@ -196,17 +198,46 @@ class KakaoLogin(SocialLoginView):
 
 # 유저 페이지 확인 (유저정보 및 유저 작성한 글 확인 )
 @api_view(["GET", "PUT"])
+@permission_classes([IsOwnerOrReadOnly])
 def my_page(request, user_pk):
     user_info = get_object_or_404(User, pk=user_pk)
-    print(user_info)
     if request.method == "GET":
-        serializers = UserArticleInfo(user_info)
-        print(serializers.data, type(serializers.data))
-        return Response(serializers.data)
+        serializers = UserInfo(user_info)
+        # user_article = Article.objects.filter(user=request.user)
+        user_comment = Comment.objects.filter(user=user_info)
+        user_recomment = ReComment.objects.filter(user=user_info)
+        # user_profile = Profiles.objects.get(user=user_info)
+        user_score = Score.objects.get(user=user_info)
+        # user_pick = Pick.objects.filter(user=request.user)
+        comment = []
+        for c in user_comment:
+            comment.append(
+                {
+                    "content": c.content,
+                    "article_pk": c.article.pk,
+                    "created_at": c.created_at.strftime("%Y-%m-%d %H:%M"),
+                }
+            )
+        for r in user_recomment:
+            comment.append(
+                {
+                    "content": r.content,
+                    "article_pk": r.article.pk,
+                    "created_at": r.created_at.strftime("%Y-%m-%d %H:%M"),
+                }
+            )
+        all_data = {
+            "comment": comment,
+            "userinfo": serializers.data,
+            # "grade": user_profile.grade,
+            "all_score": user_score.total,
+            "today_score": user_score.today,
+        }
+        return Response(all_data)
     # 유저정보 수정 put메서드 사용 (raise_exception=True<- (commit=True)와 같은 역활
     elif request.method == "PUT":
         if request.user.is_authenticated:
-            serializers = UserArticleInfo(data=request.data, instance=user_info)
+            serializers = UserInfo(data=request.data, instance=user_info)
             if serializers.is_valid(raise_exception=True):
                 serializers.save()
                 return Response(serializers.data)

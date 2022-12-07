@@ -14,19 +14,18 @@ urlpatterns = [
     path("<int:article_pk>/article_detail/", views.get_article),
     path("<int:game_pk>/game_pick/", views.pick_AB),
     # path("new_article/", views.today_article),
-    path("<int:comment_pk>/comment_like/", views.like_comment),
     path(
         "<int:article_pk>/comment/",
         views.CommentViewSet.as_view({"post": "create", "get": "list"}),
     ),
     path(
-        "<int:article_pk>/comment/<int:pk>",
+        "<int:article_pk>/comment/<int:pk>/",
         views.CommentViewSet.as_view(
             {"put": "update", "patch": "partial_update", "delete": "destroy"}
         ),
     ),
     path(
-        "<int:article_pk>/comment/<int:comment_pk>/recomment",
+        "<int:article_pk>/comment/<int:comment_pk>/recomment/",
         views.ReCommentViewSet.as_view({"post": "create", "get": "list"}),
     ),
     path(
@@ -36,7 +35,7 @@ urlpatterns = [
         ),
     ),
     path(
-        "<int:article_pk>/comment/<int:comment_pk>/like",
+        "<int:article_pk>/comment/<int:comment_pk>/like/",
         views.LikeCreate.as_view(),
     ),
 ]

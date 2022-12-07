@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from dj_rest_auth.registration.serializers import RegisterSerializer
-
+from profiles.serializers import *
 from .models import User
 from dj_rest_auth.serializers import UserDetailsSerializer
 from articles.serializers import *
@@ -8,10 +8,7 @@ from articles.serializers import *
 
 class CustomUserDetailsSerializer(UserDetailsSerializer):
     class Meta(UserDetailsSerializer.Meta):
-        fields = UserDetailsSerializer.Meta.fields + (
-            "nickname",
-            "badge",
-        )
+        fields = UserDetailsSerializer.Meta.fields + ("nickname",)
 
 
 class CustomUserRegisterSerializer(RegisterSerializer):
@@ -33,24 +30,32 @@ class CustomUserRegisterSerializer(RegisterSerializer):
         return user
 
 
-class UserArticleInfo(serializers.ModelSerializer):
+class UserInfo(serializers.ModelSerializer):
     user = CustomUserDetailsSerializer(read_only=True)
     article = serializers.SerializerMethodField()
-    comment = serializers.SerializerMethodField()
     user_pick = serializers.SerializerMethodField()
+    profiles = serializers.SerializerMethodField()
+    user_badges = UserBadgeSerializer(read_only=True, many=True)
 
     def get_article(self, obj):
         article = list(obj.article_set.all())
-        return ArticleSerializer(article, many=True).data
-
-    def get_comment(self, obj):
-        comment = list(obj.comment_set.all())
-        return CommentSerializer(comment, many=True).data
+        return InfoArticleSerializer(article, many=True, read_only=True).data
 
     def get_user_pick(self, obj):
         user_pick = list(obj.pick_set.all())
-        return PickSerializer(user_pick, many=True).data
+        return PickSerializer(user_pick, many=True, read_only=True).data
+
+    def get_profiles(self, obj):
+        profiles = obj.profiles.get(user=obj)
+        return ProfileSerializer(profiles, read_only=True).data
 
     class Meta:
         model = User
-        fields = ["user", "nickname", "article", "comment", "user_pick", "badge"]
+        fields = [
+            "user",
+            "nickname",
+            "article",
+            "user_pick",
+            "profiles",
+            "user_badges",
+        ]

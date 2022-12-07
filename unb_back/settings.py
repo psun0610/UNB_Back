@@ -41,6 +41,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     "accounts",
     "articles",
+    "profiles",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -59,7 +60,6 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.kakao",
     "corsheaders",
-    "profiles",
     "django_mysql",
 ]
 
@@ -132,6 +132,7 @@ REST_AUTH_SERIALIZERS = {
 
 
 REST_FRAMEWORK = {
+    "DATETIME_INPUT_FORMATS": ["%d-%m-%Y %H:%M:%S"],
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",

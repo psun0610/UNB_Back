@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.db.models import Q
 from .models import *
+from profiles.models import Score
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .permissions import IsOwnerOrReadOnly
 from profiles.models import Grass
@@ -333,6 +334,8 @@ def pick_AB(request, game_pk):
         A_percent = (A_pick / all_pick) * 100
         B_percent = (B_pick / all_pick) * 100
 
+        Response(data)
+
         data = {
             "all_count": all_pick,
             "A_count": A_pick,
@@ -357,19 +360,3 @@ def pick_AB(request, game_pk):
             "B_percent": round(B_percent, 1),
         }
         return Response(data)
-
-
-@api_view(["POST"])
-def like_comment(request, comment_pk):
-    comment = get_object_or_404(Comment, pk=comment_pk)
-
-    if comment.like.filter(user=request.user).exists():
-        comment.like.remove(request.user)
-    else:
-        comment.like.add(request.user)
-
-    data = {
-        "like_counts": len(comment.like.all()),
-        "is_likeed": comment.like.filter(user=request.user).exists(),
-    }
-    return Response(data)
