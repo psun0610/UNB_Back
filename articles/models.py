@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from datetime import datetime
 
 # Create your models here.
 
@@ -28,7 +29,7 @@ class Comment(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.CASCADE
     )
-    created_at = models.DateField(auto_now_add=True, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=False, blank=False)
     content = models.TextField()
     like = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="comment_like")
 
@@ -63,7 +64,7 @@ class ReComment(models.Model):
         null=False,
         blank=False,
     )
-    created_at = models.DateField(auto_now_add=True, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=False, blank=False)
     content = models.TextField()
 
     def __str__(self):
@@ -79,3 +80,20 @@ class Pick(models.Model):
     )
 
     AB = models.IntegerField(default=0)
+
+
+# 총점수, 일일 점수
+class Score(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
+    )
+    # 토탈 스코어 = 유저의 픽 개수 * 10 + 유저의 게시글 * 20 + 유저의 댓글 * 5
+    total = models.IntegerField(default=0)
+
+    # 투데이 스코어 = 픽을 만들때마다 * 10 + 게시글 만들때마다 * 20 + 댓글 작성시마다 * 5
+    today = models.IntegerField(default=0)
+
+    updated = models.DateField(auto_now=True)

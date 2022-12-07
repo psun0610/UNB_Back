@@ -31,3 +31,7 @@ class UsingBadge(models.Model):
     badge = models.ForeignKey(
         Badge, null=False, blank=False, on_delete=models.CASCADE, default=1
     )
+
+class profile(models.Model):
+    grade = models.IntegerField(default=0)
+

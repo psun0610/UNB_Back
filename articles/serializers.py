@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from articles.models import Article, Comment, ReComment, Pick, Like
+from articles.models import Article, Comment, ReComment, Pick, Like, Score
 
 
 class ReCommentSerializer(serializers.ModelSerializer):
@@ -80,13 +80,44 @@ class PickSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ListDataSerializer(serializers.ModelSerializer):
+    ABcount = serializers.SerializerMethodField()
+
+    def get_ABcount(self, obj):
+        game = Article.objects.get(pk=obj.pk)
+        if game.A_count > 0 or game.B_count > 0:
+            all_pick = game.A_count + game.B_count
+            A_percent = (game.A_count / all_pick) * 100
+            B_percent = (game.B_count / all_pick) * 100
+            ABcount = {
+                "A_percent": round(A_percent, 1),
+                "B_percent": round(B_percent, 1),
+            }
+        else:
+            ABcount = {
+                "A_percent": 0,
+                "B_percent": 0,
+            }
+        return ABcount
+
+    class Meta:
+        model = Article
+        fields = [
+            "pk",
+            "title",
+            "A",
+            "B",
+            "user",
+            "ABcount",
+        ]
+
+
 class GetArticleSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source="user.nickname")
     comment = serializers.SerializerMethodField()
 
     def get_comment(self, obj):
         comment = list(obj.comment_set.all())
-
         # comment = {"test": "테스트용"}
         return CommentSerializer(comment, many=True).data
 
@@ -100,3 +131,9 @@ class GetArticleSerializer(serializers.ModelSerializer):
             "user",
             "comment",
         )
+
+
+class InfoArticleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Article
+        fields = ("pk", "title")
