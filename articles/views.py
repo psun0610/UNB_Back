@@ -11,6 +11,7 @@ from .permissions import IsOwnerOrReadOnly
 from profiles.models import Grass
 import datetime
 import calendar
+from rest_framework.pagination import PageNumberPagination
 
 today = datetime.date.today()
 
@@ -27,37 +28,75 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
 
-        score = Score.objects.get(user=self.request.user)
-        score.total += 20
-        score.today += 20
-        score.save()
+        try:
+            score = Score.objects.get(user=self.request.user)
+            score.total += 20
+            score.today += 20
+            score.save()
+        except:
+            Score.objects.create(user=self.request.user)
+            score = Score.objects.get(user=self.request.user)
+            score.total += 20
+            score.today += 20
+            score.save()
 
-        grass = Grass.objects.get(
-            user=self.request.user, year=year, month=month, monthrange=monthrange
-        )
-        if day not in grass.daylist:
-            grass.daylist.append(day)
-        grass.save()
+        try:
+            grass = Grass.objects.get(
+                user=self.request.user, year=year, month=month, monthrange=monthrange
+            )
+            if day not in grass.daylist:
+                grass.daylist.append(day)
+            grass.save()
 
-        daylist = grass.daylist
-        if len(grass.daylist) == 1:
-            consecutive = 1
-        else:
-            cnt = 1
-            daymax1 = []
-            daymax2 = []
-            for i in daylist:
-                daymax1.append(i)
-            daymax1.append(0)
-            for i in range(len(daylist) - 1):
-                if daymax1[i + 1] - daymax1[i] == 1:
-                    cnt += 1
-                else:
-                    daymax2.append(cnt)
-                    cnt = 1
-            consecutive = max(daymax2)
-        grass.consecutive = consecutive
-        grass.save()
+            daylist = grass.daylist
+            if len(grass.daylist) == 1:
+                consecutive = 1
+            else:
+                cnt = 1
+                daymax1 = []
+                daymax2 = []
+                for i in daylist:
+                    daymax1.append(i)
+                daymax1.append(0)
+                for i in range(len(daylist)):
+                    if daymax1[i + 1] - daymax1[i] == 1:
+                        cnt += 1
+                    else:
+                        daymax2.append(cnt)
+                        cnt = 1
+                consecutive = max(daymax2)
+            grass.consecutive = consecutive
+            grass.save()
+        except:
+            Grass.objects.create(
+                user=self.request.user, year=year, month=month, monthrange=monthrange
+            )
+            grass = Grass.objects.get(
+                user=self.request.user, year=year, month=month, monthrange=monthrange
+            )
+            if day not in grass.daylist:
+                grass.daylist.append(day)
+            grass.save()
+
+            daylist = grass.daylist
+            if len(grass.daylist) == 1:
+                consecutive = 1
+            else:
+                cnt = 1
+                daymax1 = []
+                daymax2 = []
+                for i in daylist:
+                    daymax1.append(i)
+                daymax1.append(0)
+                for i in range(len(daylist)):
+                    if daymax1[i + 1] - daymax1[i] == 1:
+                        cnt += 1
+                    else:
+                        daymax2.append(cnt)
+                        cnt = 1
+                consecutive = max(daymax2)
+            grass.consecutive = consecutive
+            grass.save()
         serializer.save(user=self.request.user)
 
     def retrieve(self, request, pk=None):
@@ -74,21 +113,25 @@ class ArticleViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def list(self, request, *args, **kwargs):
-        queryset = Article.objects.all()
-        serializers = ListDataSerializer(queryset, many=True)
         try:
             score = Score.objects.get(user=request.user)
             if score.updated != today:
                 score.today = 0
                 score.save()
-
         except:
             pass
-        return Response(serializers.data)
+        queryset = Article.objects.all()
+        serializer = ListDataSerializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = ListDataSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        return Response(serializer.data)
 
 
 @api_view(["GET"])
 def get_article(request, article_pk):
+
     article = get_object_or_404(Article, pk=article_pk)
     try:
         score = Score.objects.get(user=request.user)
@@ -111,38 +154,75 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
 
     def perform_create(self, serializer):
+        try:
+            score = Score.objects.get(user=self.request.user)
+            score.total += 5
+            score.today += 5
+            score.save()
+        except:
+            Score.objects.create(user=self.request.user)
+            score = Score.objects.get(user=self.request.user)
+            score.total += 5
+            score.today += 5
+            score.save()
 
-        score = Score.objects.get(user=self.request.user)
-        score.total += 5
-        score.today += 5
-        score.save()
+        try:
+            grass = Grass.objects.get(
+                user=self.request.user, year=year, month=month, monthrange=monthrange
+            )
+            if day not in grass.daylist:
+                grass.daylist.append(day)
+            grass.save()
 
-        grass = Grass.objects.get(
-            user=self.request.user, year=year, month=month, monthrange=monthrange
-        )
-        if day not in grass.daylist:
-            grass.daylist.append(day)
-        grass.save()
+            daylist = grass.daylist
+            if len(grass.daylist) == 1:
+                consecutive = 1
+            else:
+                cnt = 1
+                daymax1 = []
+                daymax2 = []
+                for i in daylist:
+                    daymax1.append(i)
+                daymax1.append(0)
+                for i in range(len(daylist)):
+                    if daymax1[i + 1] - daymax1[i] == 1:
+                        cnt += 1
+                    else:
+                        daymax2.append(cnt)
+                        cnt = 1
+                consecutive = max(daymax2)
+            grass.consecutive = consecutive
+            grass.save()
+        except:
+            Grass.objects.create(
+                user=self.request.user, year=year, month=month, monthrange=monthrange
+            )
+            grass = Grass.objects.get(
+                user=self.request.user, year=year, month=month, monthrange=monthrange
+            )
+            if day not in grass.daylist:
+                grass.daylist.append(day)
+            grass.save()
 
-        daylist = grass.daylist
-        if len(grass.daylist) == 1:
-            consecutive = 1
-        else:
-            cnt = 1
-            daymax1 = []
-            daymax2 = []
-            for i in daylist:
-                daymax1.append(i)
-            daymax1.append(0)
-            for i in range(len(daylist) - 1):
-                if daymax1[i + 1] - daymax1[i] == 1:
-                    cnt += 1
-                else:
-                    daymax2.append(cnt)
-                    cnt = 1
-            consecutive = max(daymax2)
-        grass.consecutive = consecutive
-        grass.save()
+            daylist = grass.daylist
+            if len(grass.daylist) == 1:
+                consecutive = 1
+            else:
+                cnt = 1
+                daymax1 = []
+                daymax2 = []
+                for i in daylist:
+                    daymax1.append(i)
+                daymax1.append(0)
+                for i in range(len(daylist)):
+                    if daymax1[i + 1] - daymax1[i] == 1:
+                        cnt += 1
+                    else:
+                        daymax2.append(cnt)
+                        cnt = 1
+                consecutive = max(daymax2)
+            grass.consecutive = consecutive
+            grass.save()
         serializer.save(
             user=self.request.user,
             article=Article.objects.get(pk=self.kwargs.get("article_pk")),
@@ -241,37 +321,75 @@ def pick_AB(request, game_pk):
             else:
                 Pick.objects.create(user=request.user, AB=pick, article=game)
 
-                score = Score.objects.get(user=request.user)
-                score.total += 10
-                score.today += 10
-                score.save()
+                try:
+                    score = Score.objects.get(user=request.user)
+                    score.total += 10
+                    score.today += 10
+                    score.save()
+                except:
+                    Score.objects.create(user=request.user)
+                    score = Score.objects.get(user=request.user)
+                    score.total += 10
+                    score.today += 10
+                    score.save()
 
-                grass = Grass.objects.get(
-                    user=request.user, year=year, month=month, monthrange=monthrange
-                )
-                if day not in grass.daylist:
-                    grass.daylist.append(day)
-                grass.save()
+                try:
+                    grass = Grass.objects.get(
+                        user=request.user, year=year, month=month, monthrange=monthrange
+                    )
+                    if day not in grass.daylist:
+                        grass.daylist.append(day)
+                    grass.save()
 
-                daylist = grass.daylist
-                if len(grass.daylist) == 1:
-                    consecutive = 1
-                else:
-                    cnt = 1
-                    daymax1 = []
-                    daymax2 = []
-                    for i in daylist:
-                        daymax1.append(i)
-                    daymax1.append(0)
-                    for i in range(len(daylist) - 1):
-                        if daymax1[i + 1] - daymax1[i] == 1:
-                            cnt += 1
-                        else:
-                            daymax2.append(cnt)
-                            cnt = 1
-                    consecutive = max(daymax2)
-                grass.consecutive = consecutive
-                grass.save()
+                    daylist = grass.daylist
+                    if len(grass.daylist) == 1:
+                        consecutive = 1
+                    else:
+                        cnt = 1
+                        daymax1 = []
+                        daymax2 = []
+                        for i in daylist:
+                            daymax1.append(i)
+                        daymax1.append(0)
+                        for i in range(len(daylist)):
+                            if daymax1[i + 1] - daymax1[i] == 1:
+                                cnt += 1
+                            else:
+                                daymax2.append(cnt)
+                                cnt = 1
+                        consecutive = max(daymax2)
+                    grass.consecutive = consecutive
+                    grass.save()
+                except:
+                    Grass.objects.create(
+                        user=request.user, year=year, month=month, monthrange=monthrange
+                    )
+                    grass = Grass.objects.get(
+                        user=request.user, year=year, month=month, monthrange=monthrange
+                    )
+                    if day not in grass.daylist:
+                        grass.daylist.append(day)
+                    grass.save()
+
+                    daylist = grass.daylist
+                    if len(grass.daylist) == 1:
+                        consecutive = 1
+                    else:
+                        cnt = 1
+                        daymax1 = []
+                        daymax2 = []
+                        for i in daylist:
+                            daymax1.append(i)
+                        daymax1.append(0)
+                        for i in range(len(daylist)):
+                            if daymax1[i + 1] - daymax1[i] == 1:
+                                cnt += 1
+                            else:
+                                daymax2.append(cnt)
+                                cnt = 1
+                        consecutive = max(daymax2)
+                    grass.consecutive = consecutive
+                    grass.save()
 
         # 선택지 아티클에 저장 후 유저라면 선택기록 생성
         # 이후 되돌려보낼 픽카운트 통계 리스폰시키기
