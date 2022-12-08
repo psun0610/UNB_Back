@@ -29,7 +29,7 @@ urlpatterns = [
         views.ReCommentViewSet.as_view({"post": "create", "get": "list"}),
     ),
     path(
-        "<int:article_pk>/comment/<int:comment_pk>/recomment/<int:pk>",
+        "<int:article_pk>/comment/<int:comment_pk>/recomment/<int:pk>/",
         views.ReCommentViewSet.as_view(
             {"put": "update", "patch": "partial_update", "delete": "destroy"}
         ),
