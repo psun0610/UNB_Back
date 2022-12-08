@@ -6,6 +6,7 @@ from .models import *
 import datetime
 import calendar
 
+today = datetime.date.today()
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
@@ -57,3 +58,18 @@ def check_score(sender, instance, **kwargs):
         user_profile.grade = 7
         # get_badge(7)
     user_profile.save()
+    all_today= Score.objects.filter(updated=today).order_by("-today").first()
+    todayuser = TodayUser.objects.filter(updated_at=today)
+    if len(todayuser) ==0:
+        TodayUser.objects.create(user=user)
+        print("베스트유저생성")
+    else:
+        best_user = todayuser.first()
+        best_user.user = all_today.user
+        best_user.save()
+        print("베스트유저변경")
+        
+
+    
+
+        
