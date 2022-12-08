@@ -334,8 +334,6 @@ def pick_AB(request, game_pk):
         A_percent = (A_pick / all_pick) * 100
         B_percent = (B_pick / all_pick) * 100
 
-        Response(data)
-
         data = {
             "all_count": all_pick,
             "A_count": A_pick,
@@ -349,14 +347,14 @@ def pick_AB(request, game_pk):
         all_pick = game.A_count + game.B_count
         A_pick = game.A_count
         B_pick = game.B_count
-        A_percent = (A_pick / all_pick) * 100
-        B_percent = (B_pick / all_pick) * 100
+        # A_percent = (A_pick / all_pick) * 100
+        # B_percent = (B_pick / all_pick) * 100
 
         data = {
             "all_count": all_pick,
             "A_count": A_pick,
             "B_count": B_pick,
-            "A_percent": round(A_percent, 1),
-            "B_percent": round(B_percent, 1),
+            # "A_percent": round(A_percent, 1),
+            # "B_percent": round(B_percent, 1),
         }
         return Response(data)
