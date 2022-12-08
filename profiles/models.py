@@ -59,3 +59,12 @@ class Score(models.Model):
     today = models.IntegerField(default=0)
 
     updated = models.DateField(auto_now=True)
+
+
+class TodayUser(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
+    )
