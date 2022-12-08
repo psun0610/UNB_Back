@@ -238,43 +238,41 @@ def pick_AB(request, game_pk):
                 picked[0].AB = pick
                 picked[0].save()
                 print("변경")
+            else:
+                Pick.objects.create(user=request.user, AB=pick, article=game)
 
-                try:
+                score = Score.objects.get(user=request.user)
+                score.total += 10
+                score.today += 10
+                score.save()
 
-                    score = Score.objects.get(user=request.user)
-                    score.total += 10
-                    score.today += 10
-                    score.save()
+                grass = Grass.objects.get(
+                    user=request.user, year=year, month=month, monthrange=monthrange
+                )
+                if day not in grass.daylist:
+                    grass.daylist.append(day)
+                grass.save()
 
-                    grass = Grass.objects.get(
-                        user=request.user, year=year, month=month, monthrange=monthrange
-                    )
-                    if day not in grass.daylist:
-                        grass.daylist.append(day)
-                    grass.save()
+                daylist = grass.daylist
+                if len(grass.daylist) == 1:
+                    consecutive = 1
+                else:
+                    cnt = 1
+                    daymax1 = []
+                    daymax2 = []
+                    for i in daylist:
+                        daymax1.append(i)
+                    daymax1.append(0)
+                    for i in range(len(daylist) - 1):
+                        if daymax1[i + 1] - daymax1[i] == 1:
+                            cnt += 1
+                        else:
+                            daymax2.append(cnt)
+                            cnt = 1
+                    consecutive = max(daymax2)
+                grass.consecutive = consecutive
+                grass.save()
 
-                    daylist = grass.daylist
-                    if len(grass.daylist) == 1:
-                        consecutive = 1
-                    else:
-                        cnt = 1
-                        daymax1 = []
-                        daymax2 = []
-                        for i in daylist:
-                            daymax1.append(i)
-                        daymax1.append(0)
-                        for i in range(len(daylist) - 1):
-                            if daymax1[i + 1] - daymax1[i] == 1:
-                                cnt += 1
-                            else:
-                                daymax2.append(cnt)
-                                cnt = 1
-                        consecutive = max(daymax2)
-                    grass.consecutive = consecutive
-                    grass.save()
-
-                except:
-                    pass
         # 선택지 아티클에 저장 후 유저라면 선택기록 생성
         # 이후 되돌려보낼 픽카운트 통계 리스폰시키기
         all_pick = game.A_count + game.B_count
