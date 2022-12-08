@@ -1,7 +1,20 @@
 from django.db import models
+from accounts.models import *
 from django.conf import settings
+from django_mysql.models import ListCharField
 
 # Create your models here.
+class Grass(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.CASCADE
+    )
+    year = models.IntegerField(blank=True)
+    month = models.IntegerField(blank=True)
+    monthrange = models.IntegerField(blank=True)
+    daylist = ListCharField(
+        base_field=models.IntegerField(blank=True), max_length=(30 * 30)
+    )
+    consecutive = models.IntegerField(blank=True, default=0)
 
 
 class Badge(models.Model):
@@ -15,32 +28,22 @@ class UserBadge(models.Model):
         null=False,
         blank=False,
         on_delete=models.CASCADE,
-        related_name="user_badge",
+        related_name="user_badges",
     )
     badge = models.ForeignKey(Badge, null=False, blank=False, on_delete=models.CASCADE)
 
 
-class UsingBadge(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        null=False,
-        blank=False,
-        on_delete=models.CASCADE,
-        related_name="using_badge",
-    )
+class Profiles(models.Model):
+    grade = models.IntegerField(default=0)
     badge = models.ForeignKey(
         Badge, null=False, blank=False, on_delete=models.CASCADE, default=1
     )
-
-
-class Profiles(models.Model):
-    grade = models.IntegerField(default=1)
-
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=False,
         blank=False,
         on_delete=models.CASCADE,
+        related_name="profiles",
     )
 
 
@@ -61,6 +64,7 @@ class Score(models.Model):
     updated = models.DateField(auto_now=True)
 
 
+
 class TodayUser(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -68,3 +72,4 @@ class TodayUser(models.Model):
         blank=False,
         on_delete=models.CASCADE,
     )
+

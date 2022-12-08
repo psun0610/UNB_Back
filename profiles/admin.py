@@ -4,4 +4,4 @@ from .models import *
 
 admin.site.register(Badge)
 admin.site.register(UserBadge)
-admin.site.register(UsingBadge)
+admin.site.register(Profiles)
