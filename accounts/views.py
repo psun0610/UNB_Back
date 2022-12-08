@@ -208,6 +208,7 @@ def my_page(request, user_pk):
         user_recomment = ReComment.objects.filter(user=user_info)
         # user_profile = Profiles.objects.get(user=user_info)
         user_score = Score.objects.get(user=user_info)
+        user_grass = Grass.objects.get(user=user_info)
         # user_pick = Pick.objects.filter(user=request.user)
         comment = []
         for c in user_comment:
@@ -232,6 +233,12 @@ def my_page(request, user_pk):
             # "grade": user_profile.grade,
             "all_score": user_score.total,
             "today_score": user_score.today,
+            #  user_grass
+            "year": user_grass.year,
+            "month": user_grass.month,
+            "monthrange": user_grass.monthrange,
+            "daylist": user_grass.daylist,
+            "consecutive": user_grass.consecutive,
         }
         return Response(all_data)
     # 유저정보 수정 put메서드 사용 (raise_exception=True<- (commit=True)와 같은 역활
