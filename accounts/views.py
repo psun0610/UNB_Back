@@ -14,12 +14,17 @@ from allauth.socialaccount.models import SocialAccount
 from .models import User
 from rest_framework.decorators import api_view, permission_classes
 from .serializers import *
-from profiles.models import Score, Profiles
+from profiles.serializers import *
+from profiles.models import *
+from django.db.models import Q
 from articles.permissions import IsOwnerOrReadOnly
+import datetime
 
 state = getattr(settings, "STATE")
 BASE_URL = "http://localhost:8000/"
 GOOGLE_CALLBACK_URI = BASE_URL + "accounts/google/callback/"
+
+today = datetime.date.today()
 
 
 def google_login(request):

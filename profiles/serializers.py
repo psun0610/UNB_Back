@@ -24,7 +24,7 @@ class UserBadgeSerializer(serializers.ModelSerializer):
 class ScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Score
-        fields = ("user", "total")
+        fields = ("user", "total", "today")
 
 
 class ProfileSerializer(serializers.ModelSerializer):
