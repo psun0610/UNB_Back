@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from .serializers import *
 from rest_framework import viewsets, status, generics, mixins
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.db.models import Q
 from .models import *
@@ -12,6 +12,7 @@ from profiles.models import Grass
 import datetime
 import calendar
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny
 
 today = datetime.date.today()
 
@@ -214,6 +215,7 @@ def today_article(request):
 
 
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def random_article(request):
     random_article = Article.objects.order_by("?").first()
     article = random_article.pk
