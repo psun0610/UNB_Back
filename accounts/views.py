@@ -19,6 +19,7 @@ from profiles.models import *
 from django.db.models import Q
 from articles.permissions import IsOwnerOrReadOnly
 import datetime
+from rest_framework.permissions import AllowAny
 
 state = getattr(settings, "STATE")
 BASE_URL = "http://localhost:8000/"
@@ -113,18 +114,18 @@ class GoogleLogin(SocialLoginView):
 
 KAKAO_CALLBACK_URI = BASE_URL + "accounts/kakao/callback/"
 
-
 def kakao_login(request):
     rest_api_key = getattr(settings, "SOCIAL_AUTH_KAKAO_CLIENT_ID")
     return redirect(
         f"https://kauth.kakao.com/oauth/authorize?client_id={rest_api_key}&redirect_uri={KAKAO_CALLBACK_URI}&response_type=code&scope=account_email"
     )
 
-
+@api_view(['GET']) 
+@permission_classes([AllowAny])
 def kakao_callback(request):
-    rest_api_key = getattr(settings, "SOCIAL_AUTH_KAKAO_CLIENT_ID")
+    rest_api_key = '17927c83c8f77eef6c83ef6dd7ff221c'
     code = request.GET.get("code")
-    redirect_uri = KAKAO_CALLBACK_URI
+    redirect_uri = 'http://localhost:8080/login'
     """
     Access Token Request
     """
@@ -153,7 +154,6 @@ def kakao_callback(request):
     카카오톡 프로필 이미지, 배경 이미지 url 가져올 수 있음
     print(kakao_account) 참고
     """
-    # print(kakao_account)
     email = kakao_account.get("email")
     """
     Signup or Signin Request
@@ -173,7 +173,7 @@ def kakao_callback(request):
                 {"err_msg": "no matching social type"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        # 기존에 Google로 가입된 유저
+        # 기존에 kakao로 가입된 유저
         data = {"access_token": access_token, "code": code}
         accept = requests.post(f"{BASE_URL}accounts/kakao/login/finish/", data=data)
         accept_status = accept.status_code
@@ -192,13 +192,13 @@ def kakao_callback(request):
         # user의 pk, email, first name, last name과 Access Token, Refresh token 가져옴
         accept_json = accept.json()
         accept_json.pop("user", None)
-        return JsonResponse(accept_json)
+        return Response(accept_json)
 
 
 class KakaoLogin(SocialLoginView):
     adapter_class = kakao_view.KakaoOAuth2Adapter
     client_class = OAuth2Client
-    callback_url = KAKAO_CALLBACK_URI
+    callback_url = 'http://localhost:8080/login'
 
 
 # 유저 페이지 확인 (유저정보 및 유저 작성한 글 확인 )
