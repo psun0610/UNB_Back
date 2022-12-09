@@ -206,24 +206,18 @@ def today_article(request):
     return Response(serializer.data)
 
 
-# 밸런스게임 픽 카운트 통계
-# @api_view(["GET"])
-# def count_pick(request, game_pk):
-#     game = get_object_or_404(Article, pk=game_pk)
-#     all_pick = Pick.objects.all(article=game)
-#     A_pick = all_pick.filter(AB=1)
-#     B_pick = all_pick.filter(AB=2)
-#     A_percent = (A_pick.count() / all_pick.count()) * 100
-#     B_percent = (B_pick.count() / all_pick.count()) * 100
+@api_view(["GET"])
+def today_article(request):
+    today_article = Article.objects.order_by("?").first()
+    serializer = ArticleSerializer(today_article)
+    return Response(serializer.data)
 
-#     pick_data = {
-#         "all_count": all_pick.count(),
-#         "A_count": A_pick.count(),
-#         "B_count": B_pick.count(),
-#         "A_percent": round(A_percent, 2),
-#         "B_percent": round(B_percent, 2),
-#     }
-#     return Response(pick_data)
+
+@api_view(["GET"])
+def random_article(request):
+    random_article = Article.objects.order_by("?").first()
+    article = random_article.pk
+    return Response({"article_pk": article})
 
 
 #  픽 추가시에
