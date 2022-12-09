@@ -34,7 +34,7 @@ class UserBadge(models.Model):
 
 
 class Profiles(models.Model):
-    grade = models.IntegerField(default=0)
+    grade = models.IntegerField(default=1)
     badge = models.ForeignKey(
         Badge, null=False, blank=False, on_delete=models.CASCADE, default=1
     )
@@ -64,7 +64,6 @@ class Score(models.Model):
     updated = models.DateField(auto_now=True)
 
 
-
 class TodayUser(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -74,4 +73,3 @@ class TodayUser(models.Model):
     )
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
-

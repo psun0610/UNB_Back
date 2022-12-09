@@ -4,6 +4,7 @@ from profiles.serializers import *
 from .models import User
 from dj_rest_auth.serializers import UserDetailsSerializer
 from articles.serializers import *
+from profiles.models import *
 
 
 class CustomUserDetailsSerializer(UserDetailsSerializer):
@@ -36,6 +37,7 @@ class UserInfo(serializers.ModelSerializer):
     user_pick = serializers.SerializerMethodField()
     profiles = serializers.SerializerMethodField()
     user_badges = UserBadgeSerializer(read_only=True, many=True)
+    grade_percent = serializers.SerializerMethodField()
 
     def get_article(self, obj):
         article = list(obj.article_set.all())
@@ -49,6 +51,28 @@ class UserInfo(serializers.ModelSerializer):
         profiles = obj.profiles.get(user=obj)
         return ProfileSerializer(profiles, read_only=True).data
 
+    def get_grade_percent(self, obj):
+        score = Score.objects.get(user=obj).total
+        grade = Profiles.objects.get(user=obj).grade
+        exp_percent = 0
+        if grade == 1:
+            exp_percent = (score / 30) * 100
+        elif grade == 2:
+            exp_percent = ((score - 30) / 300) * 100
+        elif grade == 3:
+            exp_percent = ((score - 300) / 300) * 100
+        elif grade == 4:
+            exp_percent = ((score - 600) / 400) * 100
+        elif grade == 5:
+            exp_percent = ((score - 1000) / 600) * 100
+        elif grade == 6:
+            exp_percent = ((score - 1600) / 900) * 100
+        else:
+            exp_percent = score
+        print(round(exp_percent, 1))
+        print(grade)
+        return {round(exp_percent, 1)}
+
     class Meta:
         model = User
         fields = [
@@ -58,4 +82,5 @@ class UserInfo(serializers.ModelSerializer):
             "user_pick",
             "profiles",
             "user_badges",
+            "grade_percent",
         ]
