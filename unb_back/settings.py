@@ -13,8 +13,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 import os
-import json
-import sys
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,10 +26,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 ROOT_DIR = os.path.dirname(BASE_DIR)
-SECRET_BASE_FILE = os.path.join(BASE_DIR, "secrets.json")
-secrets = json.loads(open(SECRET_BASE_FILE).read())
-for key, value in secrets.items():
-    setattr(sys.modules[__name__], key, value)
+
+SECRET_KEY = os.environ.get("SECRET_KEY")
+
+SOCIAL_AUTH_GOOGLE_CLIENT_ID = os.environ.get("SOCIAL_AUTH_GOOGLE_CLIENT_ID")
+SOCIAL_AUTH_GOOGLE_SECRET = os.environ.get("SOCIAL_AUTH_GOOGLE_SECRET")
+SOCIAL_AUTH_KAKAO_CLIENT_ID = os.environ.get("SOCIAL_AUTH_KAKAO_CLIENT_ID")
+SOCIAL_AUTH_KAKAO_SECRET = os.environ.get("SOCIAL_AUTH_KAKAO_SECRET")
+STATE = os.environ.get("STATE")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -72,6 +78,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "unb_back.urls"
