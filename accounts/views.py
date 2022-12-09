@@ -206,6 +206,7 @@ class KakaoLogin(SocialLoginView):
 @permission_classes([IsOwnerOrReadOnly])
 def my_page(request, user_pk):
     user_info = get_object_or_404(User, pk=user_pk)
+    comment = Comment.objects.filter(user=user_info)
     if request.method == "GET":
         serializers = UserInfo(user_info)
         # user_article = Article.objects.filter(user=request.user)
@@ -217,11 +218,13 @@ def my_page(request, user_pk):
         # user_pick = Pick.objects.filter(user=request.user)
         comment = []
         for c in user_comment:
+
             comment.append(
                 {
                     "content": c.content,
                     "article_pk": c.article.pk,
                     "created_at": c.created_at.strftime("%Y-%m-%d %H:%M"),
+                    "article": c.article.title,
                 }
             )
         for r in user_recomment:
@@ -253,3 +256,14 @@ def my_page(request, user_pk):
             if serializers.is_valid(raise_exception=True):
                 serializers.save()
                 return Response(serializers.data)
+
+
+@api_view(["GET"])
+@permission_classes([IsOwnerOrReadOnly])
+def changebadge(request, user_pk, userbadge_pk):
+    profile = Profiles.objects.get(user=User.objects.get(pk=user_pk))
+    userbadge = UserBadge.objects.get(pk=userbadge_pk)
+    profile.badge = Badge.objects.get(pk=userbadge.pk)
+    profile.save()
+    context = {"message": "뱃지 변경 완료"}
+    return Response(context)

@@ -11,6 +11,7 @@ from .permissions import IsOwnerOrReadOnly
 from profiles.models import Grass
 import datetime
 import calendar
+from rest_framework.pagination import PageNumberPagination
 
 today = datetime.date.today()
 
@@ -49,12 +50,14 @@ class ArticleViewSet(viewsets.ModelViewSet):
             for i in daylist:
                 daymax1.append(i)
             daymax1.append(0)
-            for i in range(len(daylist) - 1):
+            for i in range(len(daylist)):
                 if daymax1[i + 1] - daymax1[i] == 1:
                     cnt += 1
                 else:
                     daymax2.append(cnt)
+
                     cnt = 1
+            print(daymax2)
             consecutive = max(daymax2)
         grass.consecutive = consecutive
         grass.save()
@@ -74,34 +77,36 @@ class ArticleViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def list(self, request, *args, **kwargs):
-        queryset = Article.objects.all()
-        serializers = ListDataSerializer(queryset, many=True)
         try:
             score = Score.objects.get(user=request.user)
             if score.updated != today:
                 score.today = 0
                 score.save()
-
         except:
             pass
-        return Response(serializers.data)
+        queryset = Article.objects.all().order_by("-pk")
+        serializer = ListDataSerializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = ListDataSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        return Response(serializer.data)
 
 
-@api_view(["GET"])
-def get_article(request, article_pk):
-    article = get_object_or_404(Article, pk=article_pk)
-    try:
-        score = Score.objects.get(user=request.user)
-        if score.updated != today:
-            score.today = 0
-            score.save()
-
-    except:
-        pass
-    if request.method == "GET":
-        serializers = GetArticleSerializer(article)
-        print(serializers.data)
-        return Response(serializers.data)
+# @api_view(["GET"])
+# def get_article(request, article_pk):
+#     article = get_object_or_404(Article, pk=article_pk)
+#     try:
+#         score = Score.objects.get(user=request.user)
+#         if score.updated != today:
+#             score.today = 0
+#             score.save()
+#     except:
+#         pass
+#     if request.method == "GET":
+#         serializers = GetArticleSerializer(article)
+#         print(serializers.data)
+#         return Response(serializers.data)
 
 
 #  댓글 작성시에
@@ -113,13 +118,14 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
 
         score = Score.objects.get(user=self.request.user)
+        grass = Grass.objects.get(
+            user=self.request.user, year=year, month=month, monthrange=monthrange
+        )
+
         score.total += 5
         score.today += 5
         score.save()
 
-        grass = Grass.objects.get(
-            user=self.request.user, year=year, month=month, monthrange=monthrange
-        )
         if day not in grass.daylist:
             grass.daylist.append(day)
         grass.save()
@@ -134,7 +140,7 @@ class CommentViewSet(viewsets.ModelViewSet):
             for i in daylist:
                 daymax1.append(i)
             daymax1.append(0)
-            for i in range(len(daylist) - 1):
+            for i in range(len(daylist)):
                 if daymax1[i + 1] - daymax1[i] == 1:
                     cnt += 1
                 else:
@@ -263,7 +269,7 @@ def pick_AB(request, game_pk):
                     for i in daylist:
                         daymax1.append(i)
                     daymax1.append(0)
-                    for i in range(len(daylist) - 1):
+                    for i in range(len(daylist)):
                         if daymax1[i + 1] - daymax1[i] == 1:
                             cnt += 1
                         else:
