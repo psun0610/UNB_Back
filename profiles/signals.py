@@ -65,6 +65,8 @@ def check_score(sender, instance, **kwargs):
     if len(todayuser) == 0:
         TodayUser.objects.create(user=user)
         # 이때 뱃지 지급
+        # yet_user = TodayUser.objects.get(updated_at = datetime.datetime.now()-datetime.timedelta(days=1))
+        # UserBadge.objects.create(user=yet_user.user, badge="임시토론왕뱃지")
         print("베스트유저생성")
     else:
         best_user = todayuser.first()
