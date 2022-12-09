@@ -248,3 +248,14 @@ def my_page(request, user_pk):
             if serializers.is_valid(raise_exception=True):
                 serializers.save()
                 return Response(serializers.data)
+
+
+@api_view(["GET"])
+@permission_classes([IsOwnerOrReadOnly])
+def changebadge(request, user_pk, userbadge_pk):
+    profile = Profiles.objects.get(user=User.objects.get(pk=user_pk))
+    userbadge = UserBadge.objects.get(pk=userbadge_pk)
+    profile.badge = Badge.objects.get(pk=userbadge.pk)
+    profile.save()
+    context = {"message": "뱃지 변경 완료"}
+    return Response(context)
