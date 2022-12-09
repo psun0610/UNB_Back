@@ -30,5 +30,37 @@
             "name": "골드",
             "image": "badges/gold.png"
         }
+    },
+    {
+        "model": "profiles.badge",
+        "pk": 5,
+        "fields": {
+            "name": "플레",
+            "image": "badges/platinum.png"
+        }
+    },
+    {
+        "model": "profiles.badge",
+        "pk": 6,
+        "fields": {
+            "name": "다이아",
+            "image": "badges/diamond.png"
+        }
+    },
+    {
+        "model": "profiles.badge",
+        "pk": 7,
+        "fields": {
+            "name": "마스터",
+            "image": "badges/master.png"
+        }
+    },
+    {
+        "model": "profiles.badge",
+        "pk": 8,
+        "fields": {
+            "name": "토론왕",
+            "image": "badges/king.png"
+        }
     }
 ]

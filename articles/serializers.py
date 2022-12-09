@@ -37,7 +37,10 @@ class CommentSerializer(serializers.ModelSerializer):
         return BadgeSerializer(badge, read_only=True).data
 
     def get_pick(self, obj):
-        pick = Pick.objects.get(user=obj.user).AB
+        try:
+            pick = Pick.objects.get(user=obj.user).AB
+        except:
+            pick = 0
         return pick
 
     user = serializers.ReadOnlyField(source="user.nickname")
@@ -94,12 +97,14 @@ class ArticleSerializer(serializers.ModelSerializer):
         for comment in comments:
             pick = 0
             try:
-                pick = Pick.objects.get(user=comment.user).AB
+                pick = Pick.objects.get(article=obj, user=comment.user).AB
                 if pick == 1:
                     total_likes = comment.like_comment.count()
                     best_A.append((total_likes, comment))
             except:
-                pass
+                return
+        if not best_A:
+            return
         best_A.sort(reverse=True)
         return CommentSerializer(best_A[0][1], read_only=True).data
 
@@ -111,13 +116,14 @@ class ArticleSerializer(serializers.ModelSerializer):
         for comment in comments:
             pick = 0
             try:
-                pick = Pick.objects.get(user=comment.user).AB
+                pick = Pick.objects.get(article=obj, user=comment.user).AB
                 if pick == 2:
                     total_likes = comment.like_comment.count()
                     best_B.append((total_likes, comment))
-
             except:
-                pass
+                return
+        if not best_B:
+            return
         best_B.sort(reverse=True)
         return CommentSerializer(best_B[0][1], read_only=True).data
 
