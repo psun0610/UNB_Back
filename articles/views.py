@@ -224,7 +224,10 @@ def random_article(request):
 
 
 #  픽 추가시에
+
+
 @api_view(["POST", "GET"])
+@permission_classes([AllowAny])
 def pick_AB(request, game_pk):
     game = get_object_or_404(Article, pk=game_pk)
     if request.method == "POST":
