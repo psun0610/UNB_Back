@@ -84,14 +84,13 @@ class ArticleViewSet(viewsets.ModelViewSet):
                 score.save()
         except:
             pass
-        queryset = Article.objects.all()
+        queryset = Article.objects.all().order_by("-pk")
         serializer = ListDataSerializer(queryset, many=True)
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = ListDataSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
         return Response(serializer.data)
-
 
 
 # @api_view(["GET"])
@@ -108,7 +107,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
 #         serializers = GetArticleSerializer(article)
 #         print(serializers.data)
 #         return Response(serializers.data)
-
 
 
 #  댓글 작성시에
