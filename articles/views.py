@@ -93,22 +93,22 @@ class ArticleViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-@api_view(["GET"])
-def get_article(request, article_pk):
 
-    article = get_object_or_404(Article, pk=article_pk)
-    try:
-        score = Score.objects.get(user=request.user)
-        if score.updated != today:
-            score.today = 0
-            score.save()
+# @api_view(["GET"])
+# def get_article(request, article_pk):
+#     article = get_object_or_404(Article, pk=article_pk)
+#     try:
+#         score = Score.objects.get(user=request.user)
+#         if score.updated != today:
+#             score.today = 0
+#             score.save()
+#     except:
+#         pass
+#     if request.method == "GET":
+#         serializers = GetArticleSerializer(article)
+#         print(serializers.data)
+#         return Response(serializers.data)
 
-    except:
-        pass
-    if request.method == "GET":
-        serializers = GetArticleSerializer(article)
-        print(serializers.data)
-        return Response(serializers.data)
 
 
 #  댓글 작성시에
