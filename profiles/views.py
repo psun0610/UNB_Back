@@ -19,6 +19,8 @@ def score(request):
 @api_view(["GET"])
 def best_user(request):
     scores = Score.objects.filter(updated=today).order_by("-today")[:3]
-    serializers = ScoreSerializer(scores, many=True)
-
-    return Response(serializers.data)
+    if len(scores) == 0:
+        return Response("베스트유저 없음")
+    else:
+        serializers = ScoreSerializer(scores, many=True)
+        return Response(serializers.data)
