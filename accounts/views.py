@@ -23,7 +23,7 @@ from rest_framework.permissions import AllowAny
 
 state = getattr(settings, "STATE")
 BASE_URL = "http://localhost:8000/"
-GOOGLE_CALLBACK_URI = BASE_URL + "accounts/google/callback/"
+GOOGLE_CALLBACK_URI = 'http://localhost:8080/login'
 
 today = datetime.date.today()
 
@@ -38,11 +38,13 @@ def google_login(request):
         f"https://accounts.google.com/o/oauth2/v2/auth?client_id={client_id}&response_type=code&redirect_uri={GOOGLE_CALLBACK_URI}&scope={scope}"
     )
 
-
+@api_view(['GET', 'POST']) 
+@permission_classes([AllowAny])
 def google_callback(request):
     client_id = getattr(settings, "SOCIAL_AUTH_GOOGLE_CLIENT_ID")
     client_secret = getattr(settings, "SOCIAL_AUTH_GOOGLE_SECRET")
     code = request.GET.get("code")
+    print(code)
     """
     Access Token Request
     """
@@ -112,7 +114,7 @@ class GoogleLogin(SocialLoginView):
     client_class = OAuth2Client
 
 
-KAKAO_CALLBACK_URI = BASE_URL + "accounts/kakao/callback/"
+KAKAO_CALLBACK_URI = 'http://localhost:8080/login' # 프론트 로그인 URI 입력
 
 def kakao_login(request):
     rest_api_key = getattr(settings, "SOCIAL_AUTH_KAKAO_CLIENT_ID")
@@ -123,9 +125,9 @@ def kakao_login(request):
 @api_view(['GET']) 
 @permission_classes([AllowAny])
 def kakao_callback(request):
-    rest_api_key = '17927c83c8f77eef6c83ef6dd7ff221c'
+    rest_api_key = '17927c83c8f77eef6c83ef6dd7ff221c' # 카카오 앱키, 추후 시크릿 처리
     code = request.GET.get("code")
-    redirect_uri = 'http://localhost:8080/login'
+    redirect_uri = KAKAO_CALLBACK_URI
     """
     Access Token Request
     """
