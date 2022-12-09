@@ -38,5 +38,5 @@ urlpatterns = [
         "<int:article_pk>/comment/<int:comment_pk>/like/",
         views.LikeCreate.as_view(),
     ),
-    path("random_article", views.random_article),
+    path("random/article/", views.random_article),
 ]
