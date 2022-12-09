@@ -217,6 +217,7 @@ def today_article(request):
 def random_article(request):
     random_article = Article.objects.order_by("?").first()
     article = random_article.pk
+    print(random_article)
     return Response({"article_pk": article})
 
 
