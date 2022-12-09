@@ -1,11 +1,24 @@
 from django.shortcuts import render
-from .models import Score
+from rest_framework.decorators import api_view
+from .models import *
+from .serializers import *
+from rest_framework.response import Response
+import datetime
 
 # Create your views here.
 
-from rest_framework import response
+
+today = datetime.date.today()
 
 
 def score(request):
     all_score = Score.objects.all()
-    return response("테스트")
+    return Response("테스트")
+
+
+@api_view(["GET"])
+def best_user(request):
+    scores = Score.objects.filter(updated=today).order_by("-today")[:3]
+    serializers = ScoreSerializer(scores, many=True)
+
+    return Response(serializers.data)
