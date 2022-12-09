@@ -1,9 +1,15 @@
 from rest_framework import serializers
-from articles.models import Article, Comment, ReComment, Pick, Like
-from profiles.models import Score
+from articles.models import *
+from profiles.models import Score, Profiles
+from profiles.serializers import ProfileSerializer, BadgeSerializer
 
 
 class ReCommentSerializer(serializers.ModelSerializer):
+    userbadge = serializers.SerializerMethodField()
+
+    def get_userbadge(self, obj):
+        badge = Profiles.objects.get(user=obj.user).badge
+        return BadgeSerializer(badge, read_only=True).data
 
     user = serializers.ReadOnlyField(source="user.nickname")
     parent = serializers.ReadOnlyField(source="parent.pk")
@@ -16,18 +22,30 @@ class ReCommentSerializer(serializers.ModelSerializer):
             "article",
             "parent",
             "user",
+            "userbadge",
             "content",
             "created_at",
         ]
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    userbadge = serializers.SerializerMethodField()
+    pick = serializers.SerializerMethodField()
+
+    def get_userbadge(self, obj):
+        badge = Profiles.objects.get(user=obj.user).badge
+        return BadgeSerializer(badge, read_only=True).data
+
+    def get_pick(self, obj):
+        pick = Pick.objects.get(user=obj.user).AB
+        return pick
 
     user = serializers.ReadOnlyField(source="user.nickname")
     article = serializers.ReadOnlyField(source="article.pk")
     soncomments = ReCommentSerializer(many=True, read_only=True)
     # like_comment = serializers.StringRelatedField(many=True)
     total_likes = serializers.SerializerMethodField(read_only=True)
+    like_users = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Comment
@@ -35,19 +53,73 @@ class CommentSerializer(serializers.ModelSerializer):
             "pk",
             "article",
             "user",
+            "userbadge",
             "content",
             "created_at",
             "soncomments",
             "total_likes",
+            "like_users",
+            "pick",
         ]
 
     def get_total_likes(self, comment):
         return comment.like_comment.count()
 
+    def get_like_users(self, comment):
+        likes = Like.objects.filter(comment=comment).values("user_id")
+        users = []
+        for like in likes:
+            users.append(like["user_id"])
+
+        return users
+
 
 class ArticleSerializer(serializers.ModelSerializer):
+    userbadge = serializers.SerializerMethodField()
+
+    def get_userbadge(self, obj):
+        badge = Profiles.objects.get(user=obj.user).badge
+        return BadgeSerializer(badge, read_only=True).data
+
     user = serializers.ReadOnlyField(source="user.nickname")
     comments = CommentSerializer(many=True, read_only=True)
+    best_A = serializers.SerializerMethodField()
+    best_B = serializers.SerializerMethodField()
+
+    def get_best_A(self, obj):
+        comments = obj.comments.all()
+        if not comments:
+            return
+        best_A = []
+        for comment in comments:
+            pick = 0
+            try:
+                pick = Pick.objects.get(user=comment.user).AB
+                if pick == 1:
+                    total_likes = comment.like_comment.count()
+                    best_A.append((total_likes, comment))
+            except:
+                pass
+        best_A.sort(reverse=True)
+        return CommentSerializer(best_A[0][1], read_only=True).data
+
+    def get_best_B(self, obj):
+        comments = obj.comments.all()
+        best_B = []
+        if not comments:
+            return
+        for comment in comments:
+            pick = 0
+            try:
+                pick = Pick.objects.get(user=comment.user).AB
+                if pick == 2:
+                    total_likes = comment.like_comment.count()
+                    best_B.append((total_likes, comment))
+
+            except:
+                pass
+        best_B.sort(reverse=True)
+        return CommentSerializer(best_B[0][1], read_only=True).data
 
     class Meta:
         model = Article
@@ -57,11 +129,15 @@ class ArticleSerializer(serializers.ModelSerializer):
             "A",
             "B",
             "user",
+            "userbadge",
             "comments",
+            "best_A",
+            "best_B",
         ]
 
 
 class LikeSerializer(serializers.ModelSerializer):
+
     user = serializers.ReadOnlyField(source="user.nickname")
     comment = serializers.ReadOnlyField(source="comment.pk")
 
@@ -83,6 +159,13 @@ class PickSerializer(serializers.ModelSerializer):
 
 class ListDataSerializer(serializers.ModelSerializer):
     ABcount = serializers.SerializerMethodField()
+    userbadge = serializers.SerializerMethodField()
+
+    def get_userbadge(self, obj):
+        badge = Profiles.objects.get(user=obj.user).badge
+        return BadgeSerializer(badge, read_only=True).data
+
+    user = serializers.ReadOnlyField(source="user.nickname")
 
     def get_ABcount(self, obj):
         game = Article.objects.get(pk=obj.pk)
@@ -109,6 +192,7 @@ class ListDataSerializer(serializers.ModelSerializer):
             "A",
             "B",
             "user",
+            "userbadge",
             "ABcount",
         ]
 
