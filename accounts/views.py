@@ -201,6 +201,7 @@ class KakaoLogin(SocialLoginView):
 @permission_classes([IsOwnerOrReadOnly])
 def my_page(request, user_pk):
     user_info = get_object_or_404(User, pk=user_pk)
+    comment = Comment.objects.filter(user=user_info)
     if request.method == "GET":
         serializers = UserInfo(user_info)
         # user_article = Article.objects.filter(user=request.user)
@@ -212,11 +213,18 @@ def my_page(request, user_pk):
         # user_pick = Pick.objects.filter(user=request.user)
         comment = []
         for c in user_comment:
+            for a in c.user.pick_set.all():
+                if a.user == c.user and a.article == c.article:
+                    AB = a.AB
+                else:
+                    AB = ""
             comment.append(
                 {
                     "content": c.content,
                     "article_pk": c.article.pk,
                     "created_at": c.created_at.strftime("%Y-%m-%d %H:%M"),
+                    "article": c.article.title,
+                    "AB": AB,
                 }
             )
         for r in user_recomment:
