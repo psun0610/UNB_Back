@@ -17,13 +17,13 @@ from .serializers import *
 from profiles.serializers import *
 from profiles.models import *
 from django.db.models import Q
-from articles.permissions import IsOwnerOrReadOnly
+from accounts.permissions import IsOwnerOrReadOnly
 import datetime
 from rest_framework.permissions import AllowAny
 
 state = getattr(settings, "STATE")
 BASE_URL = "http://localhost:8000/"
-GOOGLE_CALLBACK_URI = 'http://localhost:8080/login'
+GOOGLE_CALLBACK_URI = "http://localhost:8080/login"
 
 today = datetime.date.today()
 
@@ -38,7 +38,8 @@ def google_login(request):
         f"https://accounts.google.com/o/oauth2/v2/auth?client_id={client_id}&response_type=code&redirect_uri={GOOGLE_CALLBACK_URI}&scope={scope}"
     )
 
-@api_view(['GET', 'POST']) 
+
+@api_view(["GET", "POST"])
 @permission_classes([AllowAny])
 def google_callback(request):
     client_id = getattr(settings, "SOCIAL_AUTH_GOOGLE_CLIENT_ID")
@@ -114,7 +115,8 @@ class GoogleLogin(SocialLoginView):
     client_class = OAuth2Client
 
 
-KAKAO_CALLBACK_URI = 'http://localhost:8080/login' # 프론트 로그인 URI 입력
+KAKAO_CALLBACK_URI = "http://localhost:8080/login"  # 프론트 로그인 URI 입력
+
 
 def kakao_login(request):
     rest_api_key = getattr(settings, "SOCIAL_AUTH_KAKAO_CLIENT_ID")
@@ -122,10 +124,11 @@ def kakao_login(request):
         f"https://kauth.kakao.com/oauth/authorize?client_id={rest_api_key}&redirect_uri={KAKAO_CALLBACK_URI}&response_type=code&scope=account_email"
     )
 
-@api_view(['GET']) 
+
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def kakao_callback(request):
-    rest_api_key = '17927c83c8f77eef6c83ef6dd7ff221c' # 카카오 앱키, 추후 시크릿 처리
+    rest_api_key = "17927c83c8f77eef6c83ef6dd7ff221c"  # 카카오 앱키, 추후 시크릿 처리
     code = request.GET.get("code")
     redirect_uri = KAKAO_CALLBACK_URI
     """
@@ -200,11 +203,11 @@ def kakao_callback(request):
 class KakaoLogin(SocialLoginView):
     adapter_class = kakao_view.KakaoOAuth2Adapter
     client_class = OAuth2Client
-    callback_url = 'http://localhost:8080/login'
+    callback_url = "http://localhost:8080/login"
 
 
 # 유저 페이지 확인 (유저정보 및 유저 작성한 글 확인 )
-@api_view(["GET", "PUT"])
+@api_view(["GET", "PUT", "PATCH"])
 @permission_classes([IsOwnerOrReadOnly])
 def my_page(request, user_pk):
     if request.method == "GET":
@@ -258,21 +261,18 @@ def my_page(request, user_pk):
         if request.user.is_authenticated:
             user_pk = request.data["user_pk"]
             badge_pk = request.data["badge_pk"]
-            user = User.objects.get(pk = user_pk)
-            badge = get_object_or_404(Badge, pk = badge_pk)
-            profile = Profiles.objects.get(user = user)
+            user = User.objects.get(pk=user_pk)
+            badge = get_object_or_404(Badge, pk=badge_pk)
+            profile = Profiles.objects.get(user=user)
             profile.badge = badge
-            profile.save()  
+            profile.save()
             badgeSerializer = BadgeDetailSerializer(badge)
-            return Response(badgeSerializer.data, status=200) 
-
-
-@api_view(["GET"])
-@permission_classes([IsOwnerOrReadOnly])
-def changebadge(request, user_pk, userbadge_pk):
-    profile = Profiles.objects.get(user=User.objects.get(pk=user_pk))
-    userbadge = UserBadge.objects.get(pk=userbadge_pk)
-    profile.badge = Badge.objects.get(pk=userbadge.pk)
-    profile.save()
-    context = {"message": "뱃지 변경 완료"}
-    return Response(context)
+            return Response(badgeSerializer.data, status=200)
+    elif request.method == "PATCH":
+        if request.user.is_authenticated:
+            nickname = request.data["nickname"]
+            user = request.user
+            user.nickname = nickname
+            user.save()
+            userSerializer = CustomUserDetailsSerializer(user)
+            return Response(userSerializer.data, status=200)
