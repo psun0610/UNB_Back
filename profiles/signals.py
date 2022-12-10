@@ -68,7 +68,7 @@ def check_score(sender, instance, **kwargs):
         yet_user = TodayUser.objects.get(
             updated_at=datetime.datetime.now() - datetime.timedelta(days=1)
         )
-        UserBadge.objects.create(user=yet_user.user, badge=get_badge(8))
+        get_badge(8)
         print("베스트유저생성")
     else:
         best_user = todayuser.first()
