@@ -207,9 +207,9 @@ class KakaoLogin(SocialLoginView):
 @api_view(["GET", "PUT"])
 @permission_classes([IsOwnerOrReadOnly])
 def my_page(request, user_pk):
-    user_info = get_object_or_404(User, pk=user_pk)
-    comment = Comment.objects.filter(user=user_info)
     if request.method == "GET":
+        user_info = get_object_or_404(User, pk=user_pk)
+        comment = Comment.objects.filter(user=user_info)
         serializers = UserInfo(user_info)
         # user_article = Article.objects.filter(user=request.user)
         user_comment = Comment.objects.filter(user=user_info)
@@ -238,6 +238,7 @@ def my_page(request, user_pk):
                 }
             )
         all_data = {
+            "user_pk": user_pk,
             "comment": comment,
             "userinfo": serializers.data,
             # "grade": user_profile.grade,
@@ -251,13 +252,19 @@ def my_page(request, user_pk):
             "consecutive": user_grass.consecutive,
         }
         return Response(all_data)
+
     # 유저정보 수정 put메서드 사용 (raise_exception=True<- (commit=True)와 같은 역활
     elif request.method == "PUT":
         if request.user.is_authenticated:
-            serializers = UserInfo(data=request.data, instance=user_info)
-            if serializers.is_valid(raise_exception=True):
-                serializers.save()
-                return Response(serializers.data)
+            user_pk = request.data["user_pk"]
+            badge_pk = request.data["badge_pk"]
+            user = User.objects.get(pk = user_pk)
+            badge = get_object_or_404(Badge, pk = badge_pk)
+            profile = Profiles.objects.get(user = user)
+            profile.badge = badge
+            profile.save()  
+            badgeSerializer = BadgeDetailSerializer(badge)
+            return Response(badgeSerializer.data, status=200) 
 
 
 @api_view(["GET"])
