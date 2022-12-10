@@ -7,9 +7,15 @@ from articles.serializers import *
 from profiles.models import *
 
 
+class BadgeDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Badge
+        fields = "__all__"
+
+
 class CustomUserDetailsSerializer(UserDetailsSerializer):
     class Meta(UserDetailsSerializer.Meta):
-        fields = UserDetailsSerializer.Meta.fields + ("nickname",)
+        fields = UserDetailsSerializer.Meta.fields + ("id","nickname",)
 
 
 class CustomUserRegisterSerializer(RegisterSerializer):
