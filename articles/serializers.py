@@ -108,7 +108,7 @@ class ArticleSerializer(serializers.ModelSerializer):
                 return
         if not best_A:
             return
-        best_A.sort(reverse=True)
+        best_A.sort(key=lambda x: -x[0])
         return CommentSerializer(best_A[0][1], read_only=True).data
 
     def get_best_B(self, obj):
@@ -127,7 +127,7 @@ class ArticleSerializer(serializers.ModelSerializer):
                 return
         if not best_B:
             return
-        best_B.sort(reverse=True)
+        best_B.sort(key=lambda x: -x[0])
         return CommentSerializer(best_B[0][1], read_only=True).data
 
     class Meta:
