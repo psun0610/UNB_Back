@@ -221,7 +221,11 @@ def my_page(request, user_pk):
         user_score = Score.objects.get(user=user_info)
         user_grass = Grass.objects.get(user=user_info)
         # user_pick = Pick.objects.filter(user=request.user)
+        user_like_comment = Like.objects.filter(user=user_info)
         comment = []
+        likecomment = []
+        for c in user_like_comment:
+            likecomment.append(c.comment.pk)
         for c in user_comment:
 
             comment.append(
@@ -243,6 +247,7 @@ def my_page(request, user_pk):
         all_data = {
             "user_pk": user_pk,
             "comment": comment,
+            "likecomment": likecomment,
             "userinfo": serializers.data,
             # "grade": user_profile.grade,
             "all_score": user_score.total,
