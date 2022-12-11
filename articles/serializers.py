@@ -44,6 +44,7 @@ class CommentSerializer(serializers.ModelSerializer):
         return pick
 
     user = serializers.ReadOnlyField(source="user.nickname")
+    userpk = serializers.ReadOnlyField(source="user.pk")
     article = serializers.ReadOnlyField(source="article.pk")
     soncomments = ReCommentSerializer(many=True, read_only=True)
     # like_comment = serializers.StringRelatedField(many=True)
@@ -56,6 +57,7 @@ class CommentSerializer(serializers.ModelSerializer):
             "pk",
             "article",
             "user",
+            "userpk",
             "userbadge",
             "content",
             "created_at",
@@ -85,6 +87,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         return BadgeSerializer(badge, read_only=True).data
 
     user = serializers.ReadOnlyField(source="user.nickname")
+    userpk = serializers.ReadOnlyField(source="user.pk")
     comments = CommentSerializer(many=True, read_only=True)
     best_A = serializers.SerializerMethodField()
     best_B = serializers.SerializerMethodField()
@@ -135,6 +138,7 @@ class ArticleSerializer(serializers.ModelSerializer):
             "A",
             "B",
             "user",
+            "userpk",
             "userbadge",
             "comments",
             "best_A",
