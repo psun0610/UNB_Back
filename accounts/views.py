@@ -128,7 +128,7 @@ def kakao_login(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def kakao_callback(request):
-    rest_api_key = "17927c83c8f77eef6c83ef6dd7ff221c"  # 카카오 앱키, 추후 시크릿 처리
+    rest_api_key = getattr(settings, "SOCIAL_AUTH_KAKAO_CLIENT_ID")  # 카카오 앱키, 추후 시크릿 처리
     code = request.GET.get("code")
     redirect_uri = KAKAO_CALLBACK_URI
     """
