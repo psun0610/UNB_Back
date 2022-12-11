@@ -38,7 +38,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_pick(self, obj):
         try:
-            pick = Pick.objects.get(user=obj.user).AB
+            pick = Pick.objects.get(user=obj.user, article=obj.article).AB
         except:
             pick = 0
         return pick
