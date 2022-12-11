@@ -64,6 +64,7 @@ platformdirs==2.5.2
 preshed==3.0.8
 prompt-toolkit==3.0.31
 psutil==5.9.2
+psycopg2-binary==2.9.5
 pure-eval==0.2.2
 pycparser==2.21
 pydantic==1.10.2
