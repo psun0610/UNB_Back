@@ -33,7 +33,7 @@ def check_score(sender, instance, **kwargs):
     user_score = Score.objects.get(user=user)
     user_profile = Profiles.objects.get(user=user)
 
-    def get_badge(grade):
+    def get_badge(grade, user):
         badge = Badge.objects.get(pk=grade)
         try:
             UserBadge.objects.get(user=user, badge=badge)
@@ -42,36 +42,36 @@ def check_score(sender, instance, **kwargs):
 
     if user_score.total >= 2500:
         user_profile.grade = 7
-        get_badge(7)
+        get_badge(7, user)
     elif user_score.total >= 1600:
         user_profile.grade = 6
-        get_badge(6)
+        get_badge(6, user)
     elif user_score.total >= 1000:
         user_profile.grade = 5
-        get_badge(5)
+        get_badge(5, user)
     elif user_score.total >= 600:
         user_profile.grade = 4
-        get_badge(4)
+        get_badge(4, user)
     elif user_score.total >= 300:
         user_profile.grade = 3
-        get_badge(3)
+        get_badge(3, user)
     elif user_score.total >= 30:
         user_profile.grade = 2
-        get_badge(2)
+        get_badge(2, user)
 
     user_profile.save()
     all_today = Score.objects.filter(updated=today).order_by("-today").first()
-    todayuser = TodayUser.objects.filter(updated_at=today)
-    if len(todayuser) == 0:
+    today_user = TodayUser.objects.filter(updated_at=today)
+    if len(today_user) == 0:
         TodayUser.objects.create(user=user)
         # 이때 뱃지 지급
         yet_user = TodayUser.objects.get(
             updated_at=datetime.datetime.now() - datetime.timedelta(days=1)
         )
-        get_badge(8)
+        get_badge(8, yet_user.user)
         print("베스트유저생성")
     else:
-        best_user = todayuser.first()
+        best_user = today_user.first()
         best_user.user = all_today.user
         best_user.save()
         print("베스트유저변경")

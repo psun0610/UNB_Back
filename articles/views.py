@@ -200,18 +200,11 @@ class PickViewSet(viewsets.ModelViewSet):
 
 
 # 오늘의 메인 주제 랜덤픽
-@api_view(["GET"])
-def today_article(request):
-    today_article = Article.objects.order_by("?").first()
-    serializer = ArticleSerializer(today_article)
-    return Response(serializer.data)
-
-
-@api_view(["GET"])
-def today_article(request):
-    today_article = Article.objects.order_by("?").first()
-    serializer = ArticleSerializer(today_article)
-    return Response(serializer.data)
+# @api_view(["GET"])
+# def today_article(request):
+#     today_article = Article.objects.order_by("?").first()
+#     serializer = ArticleSerializer(today_article)
+#     return Response(serializer.data)
 
 
 @api_view(["GET"])
@@ -311,3 +304,23 @@ def pick_AB(request, game_pk):
             # "B_percent": round(B_percent, 1),
         }
         return Response(data)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def today_article(request):
+    all_today_articles = TodayTopic.objects.all()
+    if len(all_today_articles) == 0:
+        print("오늘의 아티클 생성")
+        random_article = Article.objects.order_by("?").first()
+        print(random_article, "1")
+        TodayTopic.objects.create(article=random_article)
+        print("투데이 아티클 만듬")
+        today_articles = TodayTopic.objects.filter(created_at=today)
+        today_article_pk = today_articles[0].article.pk
+        return Response({"article_pk": today_article_pk})
+    else:
+        print("오늘의 아티클 가져오기")
+        today_articles = TodayTopic.objects.filter(created_at=today)
+        today_article_pk = today_articles[0].article.pk
+        return Response({"article_pk": today_article_pk})
