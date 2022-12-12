@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from .models import *
 from .serializers import *
 from rest_framework.response import Response
 import datetime
+from rest_framework.permissions import AllowAny
 
 # Create your views here.
 
@@ -17,6 +18,7 @@ def score(request):
 
 
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def best_user(request):
     scores = Score.objects.filter(updated=today).order_by("-today")[:3]
     if len(scores) == 0:

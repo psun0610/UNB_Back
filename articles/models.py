@@ -79,3 +79,10 @@ class Pick(models.Model):
     )
 
     AB = models.IntegerField(default=0)
+
+
+class TodayTopic(models.Model):
+    article = models.ForeignKey(
+        Article, null=False, blank=False, on_delete=models.CASCADE
+    )
+    created_at = models.DateField(auto_now_add=True, null=False, blank=False)

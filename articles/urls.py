@@ -13,7 +13,6 @@ urlpatterns = [
     path("", include(router.urls)),
     # path("<int:article_pk>/article_detail/", views.get_article),
     path("<int:game_pk>/game_pick/", views.pick_AB),
-    # path("new_article/", views.today_article),
     path(
         "<int:article_pk>/comment/",
         views.CommentViewSet.as_view({"post": "create", "get": "list"}),
@@ -39,4 +38,5 @@ urlpatterns = [
         views.LikeCreate.as_view(),
     ),
     path("random/article/", views.random_article),
+    path("today/article/", views.today_article),
 ]
