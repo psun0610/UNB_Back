@@ -48,26 +48,17 @@ if DEBUG == True:  # 개발(로컬) 환경
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-# else:  # 배포(원격, 클라우드) 환경
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": os.getenv("DATABASE_NAME"),
-#         "USER": "postgres",
-#         "PASSWORD": os.getenv("DATABASE_PASSWORD"),
-#         "HOST": os.getenv("DATABASE_HOST"),
-#         "PORT": "5432",
-#     }
-# }
-
-
-
-ALLOWED_HOSTS = [
-    "Unb-env.eba-5jaav4mx.ap-northeast-2.elasticbeanstalk.com",
-    "127.0.0.1",
-    "localhost",
-]
-
+else:  # 배포(원격, 클라우드) 환경
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("DATABASE_NAME"),
+            "USER": "postgres",
+            "PASSWORD": os.getenv("DATABASE_PASSWORD"),
+            "HOST": os.getenv("DATABASE_HOST"),
+            "PORT": "5432",
+        }
+    }
 
 
 # Application definition
@@ -228,15 +219,18 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # CORS 세팅
 ALLOWED_HOSTS = ["*"]
-CORS_ORIGIN_ALLOW_ALL = True
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
     "http://www.unbalace.cf",
-    "http://unbalace.cf",
-    "http://unb-front-3cnmv3c7c-psun0610.vercel.app",
+    "https://unbalace.cf",
+    "https://unb-front-3cnmv3c7c-psun0610.vercel.app",
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+
 CORS_ALLOW_METHODS = [
     "DELETE",
     "GET",
