@@ -65,8 +65,8 @@ ALLOWED_HOSTS = [
     "Unb-env.eba-5jaav4mx.ap-northeast-2.elasticbeanstalk.com",
     "127.0.0.1",
     "localhost",
-    "www.unbalace.cf",
-    "unb-front-3cnmv3c7c-psun0610.vercel.app/login",
+    "unbalace.cf",
+    "unb-front-3cnmv3c7c-psun0610.vercel.app",
 ]
 
 
