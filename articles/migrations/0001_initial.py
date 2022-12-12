@@ -73,28 +73,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name="TodayTopic",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("created_at", models.DateField(auto_now_add=True)),
-                (
-                    "article",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="articles.article",
-                    ),
-                ),
-            ],
-        ),
-        migrations.CreateModel(
             name="ReComment",
             fields=[
                 (

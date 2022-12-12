@@ -37,7 +37,7 @@ STATE = os.environ.get("STATE")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
 DEBUG = os.getenv("DEBUG") == "True"
 
@@ -48,18 +48,17 @@ if DEBUG == True:  # 개발(로컬) 환경
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-# else:  # 배포(원격, 클라우드) 환경
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": os.getenv("DATABASE_NAME"),
-#         "USER": "postgres",
-#         "PASSWORD": os.getenv("DATABASE_PASSWORD"),
-#         "HOST": os.getenv("DATABASE_HOST"),
-#         "PORT": "5432",
-#     }
-# }
-
+else:  # 배포(원격, 클라우드) 환경
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("DATABASE_NAME"),
+            "USER": "postgres",
+            "PASSWORD": os.getenv("DATABASE_PASSWORD"),
+            "HOST": os.getenv("DATABASE_HOST"),
+            "PORT": "5432",
+        }
+    }
 
 
 ALLOWED_HOSTS = [
@@ -67,7 +66,6 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
 ]
-
 
 
 # Application definition
