@@ -186,11 +186,15 @@ class ListDataSerializer(serializers.ModelSerializer):
             ABcount = {
                 "A_percent": round(A_percent, 1),
                 "B_percent": round(B_percent, 1),
+                "A_pick": game.A_count,
+                "B_pick": game.B_count,
             }
         else:
             ABcount = {
                 "A_percent": 0,
                 "B_percent": 0,
+                "A_pick": game.A_count,
+                "B_pick": game.B_count,
             }
         return ABcount
 
