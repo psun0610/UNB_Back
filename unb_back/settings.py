@@ -61,11 +61,13 @@ if DEBUG == True:  # 개발(로컬) 환경
 # }
 
 
+
 ALLOWED_HOSTS = [
     "Unb-env.eba-5jaav4mx.ap-northeast-2.elasticbeanstalk.com",
     "127.0.0.1",
     "localhost",
 ]
+
 
 
 # Application definition
@@ -231,6 +233,9 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
+    "http://www.unbalace.cf",
+    "http://unbalace.cf",
+    "http://unb-front-3cnmv3c7c-psun0610.vercel.app",
 ]
 CORS_ALLOW_METHODS = [
     "DELETE",
