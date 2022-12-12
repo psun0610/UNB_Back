@@ -22,8 +22,8 @@ import datetime
 from rest_framework.permissions import AllowAny
 
 state = getattr(settings, "STATE")
-BASE_URL = "http://localhost:8000/"
-GOOGLE_CALLBACK_URI = "http://localhost:8080/login"
+BASE_URL = "https://www.unbback.cf/"
+GOOGLE_CALLBACK_URI = "https://www.unbalace.cf/login"
 
 today = datetime.date.today()
 
@@ -115,7 +115,7 @@ class GoogleLogin(SocialLoginView):
     client_class = OAuth2Client
 
 
-KAKAO_CALLBACK_URI = "http://localhost:8080/login"  # 프론트 로그인 URI 입력
+KAKAO_CALLBACK_URI = "https://www.unbalace.cf/login"  # 프론트 로그인 URI 입력
 
 
 def kakao_login(request):
@@ -203,7 +203,7 @@ def kakao_callback(request):
 class KakaoLogin(SocialLoginView):
     adapter_class = kakao_view.KakaoOAuth2Adapter
     client_class = OAuth2Client
-    callback_url = "http://localhost:8080/login"
+    callback_url = "https://www.unbalace.cf/login"
 
 
 # 유저 페이지 확인 (유저정보 및 유저 작성한 글 확인 )
