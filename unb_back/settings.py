@@ -37,7 +37,7 @@ STATE = os.environ.get("STATE")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
 DEBUG = os.getenv("DEBUG") == "True"
 
@@ -59,6 +59,13 @@ else:  # 배포(원격, 클라우드) 환경
             "PORT": "5432",
         }
     }
+
+
+# ALLOWED_HOSTS = [
+#    "Unb-env.eba-5jaav4mx.ap-northeast-2.elasticbeanstalk.com",
+#    "127.0.0.1",
+#    "localhost",
+#]
 
 
 # Application definition
