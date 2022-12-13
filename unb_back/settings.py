@@ -65,7 +65,7 @@ else:  # 배포(원격, 클라우드) 환경
 #    "Unb-env.eba-5jaav4mx.ap-northeast-2.elasticbeanstalk.com",
 #    "127.0.0.1",
 #    "localhost",
-#]
+# ]
 
 
 # Application definition
