@@ -4,7 +4,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.http import JsonResponse
 from json.decoder import JSONDecodeError
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
 from dj_rest_auth.registration.views import SocialLoginView
 from allauth.socialaccount.providers.google import views as google_view
@@ -20,6 +20,7 @@ from django.db.models import Q
 from accounts.permissions import IsOwnerOrReadOnly
 import datetime
 from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
 
 state = getattr(settings, "STATE")
 BASE_URL = "https://www.unbback.cf/"
@@ -287,3 +288,13 @@ def my_page(request, user_pk):
             user.save()
             userSerializer = CustomUserDetailsSerializer(user)
             return Response(userSerializer.data, status=200)
+
+
+class DeleteAccount(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        user = self.request.user
+        user.delete()
+
+        return Response({"result": "user delete"})
