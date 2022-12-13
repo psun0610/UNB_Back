@@ -310,7 +310,8 @@ def pick_AB(request, game_pk):
 @permission_classes([AllowAny])
 def today_article(request):
     all_today_articles = TodayTopic.objects.all()
-    if len(all_today_articles) == 0:
+    today_articles = TodayTopic.objects.filter(created_at=today)
+    if len(today_articles) == 0:
         print("오늘의 아티클 생성")
         random_article = Article.objects.order_by("?").first()
         print(random_article, "1")
