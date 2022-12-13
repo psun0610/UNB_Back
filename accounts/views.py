@@ -234,6 +234,8 @@ def my_page(request, user_pk):
                     "article_pk": c.article.pk,
                     "created_at": c.created_at.strftime("%Y-%m-%d %H:%M"),
                     "article": c.article.title,
+                    "A": c.article.A,
+                    "B": c.article.B,
                 }
             )
         for r in user_recomment:
@@ -242,6 +244,10 @@ def my_page(request, user_pk):
                     "content": r.content,
                     "article_pk": r.article.pk,
                     "created_at": r.created_at.strftime("%Y-%m-%d %H:%M"),
+                    "parent": r.parent.pk,
+                    "article": r.parent.article.title,
+                    "A": r.parent.article.A,
+                    "B": r.parent.article.B,
                 }
             )
         all_data = {

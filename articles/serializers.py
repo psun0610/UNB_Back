@@ -12,6 +12,7 @@ class ReCommentSerializer(serializers.ModelSerializer):
         return BadgeSerializer(badge, read_only=True).data
 
     user = serializers.ReadOnlyField(source="user.nickname")
+    userpk = serializers.ReadOnlyField(source="user.pk")
     parent = serializers.ReadOnlyField(source="parent.pk")
     article = serializers.ReadOnlyField(source="article.pk")
 
@@ -22,6 +23,7 @@ class ReCommentSerializer(serializers.ModelSerializer):
             "article",
             "parent",
             "user",
+            "userpk",
             "userbadge",
             "content",
             "created_at",
