@@ -16,6 +16,7 @@ from rest_framework.permissions import AllowAny
 
 today = datetime.date.today()
 
+
 year = today.year
 month = today.month
 day = today.day
@@ -213,7 +214,8 @@ def random_article(request):
     random_article = Article.objects.order_by("?").first()
     article = random_article.pk
     print(random_article)
-    return Response({"article_pk": article})
+    now = datetime.datetime.now()
+    return Response({"article_pk": article, "now": now})
 
 
 #  픽 추가시에
