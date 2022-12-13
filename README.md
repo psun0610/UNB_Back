@@ -30,7 +30,7 @@ UNB는 다양한 주제들로 양자택일 토론을 하고, 가볍게 즐길 �
 
 ![image-20221213142338451](README.assets/image-20221213142338451.png)
 
-<img src="./README.assets/model.jpg" alt="모델"  />
+<img src="./README.assets/model.JPG" alt="모델"  />
 
 ## 4. 팀원 소개 및 역할
 
