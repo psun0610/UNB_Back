@@ -297,11 +297,11 @@ def my_page(request, user_pk):
             return Response({"result": "user delete"})
 
 
-class DeleteAccount(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+# class DeleteAccount(APIView):
+#     permission_classes = [permissions.IsAuthenticated]
 
-    def delete(self, request, *args, **kwargs):
-        user = self.request.user
-        user.delete()
+#     def delete(self, request, *args, **kwargs):
+#         user = self.request.user
+#         user.delete()
 
-        return Response({"result": "user delete"})
+#         return Response({"result": "user delete"})
