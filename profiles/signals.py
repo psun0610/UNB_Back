@@ -7,6 +7,10 @@ import datetime
 import calendar
 
 today = datetime.date.today()
+year = today.year
+month = today.month
+day = today.day
+monthrange = calendar.monthrange(year, month)[1]
 
 
 @receiver(post_save, sender=User)
@@ -32,6 +36,38 @@ def check_score(sender, instance, **kwargs):
     user = instance.user
     user_score = Score.objects.get(user=user)
     user_profile = Profiles.objects.get(user=user)
+
+    try:
+        grass = Grass.objects.get(
+            user=user, year=year, month=month, monthrange=monthrange
+        )
+        if day not in grass.daylist:
+            grass.daylist.append(day)
+        grass.save()
+
+        daylist = grass.daylist
+        if len(grass.daylist) == 1:
+            consecutive = 1
+        else:
+            cnt = 1
+            daymax1 = []
+            daymax2 = []
+            for i in daylist:
+                daymax1.append(i)
+            daymax1.append(0)
+            for i in range(len(daylist)):
+                if daymax1[i + 1] - daymax1[i] == 1:
+                    cnt += 1
+                else:
+                    daymax2.append(cnt)
+
+                    cnt = 1
+            print(daymax2)
+            consecutive = max(daymax2)
+        grass.consecutive = consecutive
+        grass.save()
+    except:
+        pass
 
     def get_badge(grade, user):
         badge = Badge.objects.get(pk=grade)
