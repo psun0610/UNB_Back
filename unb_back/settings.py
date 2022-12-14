@@ -41,7 +41,7 @@ STATE = os.environ.get("STATE")
 
 DEBUG = os.getenv("DEBUG")
 
-if DEBUG == True:  # 개발(로컬) 환경
+if DEBUG == False:  # 개발(로컬) 환경
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
