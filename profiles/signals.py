@@ -68,13 +68,13 @@ def check_score(sender, instance, **kwargs):
 
     user_profile.save()
     all_today = Score.objects.filter(updated=today).order_by("-today").first()
-    today_user = TodayUser.objects.filter(updated_at=today)
+    today_user = TodayUser.objects.filter(created_at=today)
     if len(today_user) == 0:
         TodayUser.objects.create(user=user)
         print("베스트유저생성")
         # 이때 뱃지 지급
         yet_user = TodayUser.objects.get(
-            updated_at=datetime.datetime.now() - datetime.timedelta(days=1)
+            created_at=datetime.datetime.now() - datetime.timedelta(days=1)
         )
         best_badge(8, yet_user.user)
         print("베스트유저 뱃지 지급")
