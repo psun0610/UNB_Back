@@ -13,6 +13,7 @@ import datetime
 import calendar
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
+from profiles.models import Score
 
 today = datetime.date.today()
 
@@ -230,6 +231,12 @@ def pick_AB(request, game_pk):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def today_article(request):
+
+    allScore = Score.objects.all()
+    for score in allScore:
+        if score.updated != today:
+            score.today = 0
+            score.save()
     all_today_articles = TodayTopic.objects.all()
     today_articles = TodayTopic.objects.filter(created_at=today)
     if len(today_articles) == 0:
