@@ -39,9 +39,9 @@ STATE = os.environ.get("STATE")
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 
-DEBUG = os.getenv("DEBUG")
+DEBUG = os.getenv("DEBUG") == "False"
 
-if DEBUG == False:  # 개발(로컬) 환경
+if DEBUG == True:  # 개발(로컬) 환경
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -154,7 +154,7 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # username 필드 사용 x
 ACCOUNT_EMAIL_REQUIRED = True  # email 필드 사용 o
 ACCOUNT_USERNAME_REQUIRED = False  # username 필드 사용 x
 ACCOUNT_AUTHENTICATION_METHOD = "email"
-OLD_PASSWORD_FIELD_ENABLED = True
+
 REST_AUTH_REGISTER_SERIALIZERS = {
     "REGISTER_SERIALIZER": "accounts.serializers.CustomUserRegisterSerializer"
 }  # 유저 회원가입
