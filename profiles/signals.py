@@ -40,6 +40,13 @@ def check_score(sender, instance, **kwargs):
         except:
             UserBadge.objects.create(user=user, badge=badge)
 
+    def best_badge(grade, user):
+        badge = Badge.objects.get(pk=8)
+        try:
+            UserBadge.objects.get(user=user, badge=badge)
+        except:
+            UserBadge.objects.create(user=user, badge=badge)
+
     if user_score.total >= 2500:
         user_profile.grade = 7
         get_badge(7, user)
@@ -64,12 +71,13 @@ def check_score(sender, instance, **kwargs):
     today_user = TodayUser.objects.filter(updated_at=today)
     if len(today_user) == 0:
         TodayUser.objects.create(user=user)
+        print("베스트유저생성")
         # 이때 뱃지 지급
         yet_user = TodayUser.objects.get(
             updated_at=datetime.datetime.now() - datetime.timedelta(days=1)
         )
-        get_badge(8, yet_user.user)
-        print("베스트유저생성")
+        best_badge(8, yet_user.user)
+        print("베스트유저 뱃지 지급")
     else:
         best_user = today_user.first()
         best_user.user = all_today.user
