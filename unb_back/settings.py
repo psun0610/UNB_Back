@@ -39,7 +39,7 @@ STATE = os.environ.get("STATE")
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 
-DEBUG = os.getenv("DEBUG") == "False"
+DEBUG = os.getenv("DEBUG")
 
 if DEBUG == True:  # 개발(로컬) 환경
     DATABASES = {
