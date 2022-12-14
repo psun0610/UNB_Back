@@ -4,7 +4,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.http import JsonResponse
 from json.decoder import JSONDecodeError
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
 from dj_rest_auth.registration.views import SocialLoginView
 from allauth.socialaccount.providers.google import views as google_view
@@ -20,6 +20,7 @@ from django.db.models import Q
 from accounts.permissions import IsOwnerOrReadOnly
 import datetime
 from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
 
 state = getattr(settings, "STATE")
 BASE_URL = "https://www.unbback.cf/"
@@ -207,7 +208,7 @@ class KakaoLogin(SocialLoginView):
 
 
 # 유저 페이지 확인 (유저정보 및 유저 작성한 글 확인 )
-@api_view(["GET", "PUT", "PATCH"])
+@api_view(["GET", "PUT", "PATCH", "DELETE"])
 @permission_classes([IsOwnerOrReadOnly])
 def my_page(request, user_pk):
     if request.method == "GET":
@@ -282,8 +283,25 @@ def my_page(request, user_pk):
     elif request.method == "PATCH":
         if request.user.is_authenticated:
             nickname = request.data["nickname"]
-            user = request.user
+            user = User.objects.get(pk=user_pk)
             user.nickname = nickname
             user.save()
             userSerializer = CustomUserDetailsSerializer(user)
             return Response(userSerializer.data, status=200)
+    elif request.method == "DELETE":
+        if request.user.is_authenticated:
+            user = User.objects.get(pk=user_pk)
+            if user != request.user:
+                return Response({"result": "본인만 삭제 할 수 있습니다."})
+            user.delete()
+            return Response({"result": "user delete"})
+
+
+class DeleteAccount(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        user = self.request.user
+        user.delete()
+
+        return Response({"result": "user delete"})
