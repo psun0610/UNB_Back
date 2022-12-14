@@ -212,6 +212,7 @@ class KakaoLogin(SocialLoginView):
 @permission_classes([IsOwnerOrReadOnly])
 def my_page(request, user_pk):
     if request.method == "GET":
+
         user_info = get_object_or_404(User, pk=user_pk)
         comment = Comment.objects.filter(user=user_info)
         serializers = UserInfo(user_info)
@@ -288,13 +289,20 @@ def my_page(request, user_pk):
             user.save()
             userSerializer = CustomUserDetailsSerializer(user)
             return Response(userSerializer.data, status=200)
+    elif request.method == "DELETE":
+        if request.user.is_authenticated:
+            user = User.objects.get(pk=user_pk)
+            if user != request.user:
+                return Response({"result": "본인만 삭제 할 수 있습니다."})
+            user.delete()
+            return Response({"result": "user delete"})
 
 
-class DeleteAccount(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+# class DeleteAccount(APIView):
+#     permission_classes = [permissions.IsAuthenticated]
 
-    def delete(self, request, *args, **kwargs):
-        user = self.request.user
-        user.delete()
+#     def delete(self, request, *args, **kwargs):
+#         user = self.request.user
+#         user.delete()
 
-        return Response({"result": "user delete"})
+#         return Response({"result": "user delete"})
