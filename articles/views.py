@@ -158,6 +158,11 @@ class PickViewSet(viewsets.ModelViewSet):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def random_article(request):
+    allScore = Score.objects.all()
+    for score in allScore:
+        if score.updated != today:
+            score.today = 0
+            score.save()
     random_article = Article.objects.order_by("?").first()
     article = random_article.pk
     print(random_article)
